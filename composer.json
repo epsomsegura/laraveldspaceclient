@@ -1,0 +1,26 @@
+{
+    "name": "epsomsegura/laraveldspaceclient",
+    "description": "This is a laravel Dspace7 client to manage dublin core metadata between platforms.",
+    "type":"library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Epsomsegura\\Laraveldspaceclient\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Epsom Segura",
+            "email": "segurajaramilloepsom@gmail.com"
+        }
+    ],
+    "require": {},
+    "minimum-stability": "dev",
+    "extra":{
+        "laravel":{
+            "providers":[
+                "Epsomsegura\\Laraveldspaceclient\\LaravelDspaceClientServiceProvider"
+            ]
+        }
+    }
+}
