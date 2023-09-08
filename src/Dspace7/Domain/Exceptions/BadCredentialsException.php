@@ -6,12 +6,17 @@ use InvalidArgumentException;
 
 class BadCredentialsException extends InvalidArgumentException
 {
-    public static function create(
-        ?string $dspaceApiUrl,
-        ?string $dspaceApiUser,
-        ?string $dspaceApiPass)
+    public static function emptyCredentials()
     {
+        return new static("Bad credentials exception: API credentials and URL are required.");
+    }
 
-        return new static("This is a exception testing");
+    public static function invalidData(string $message)
+    {
+        return new static("Bad credentials exception: ".$message.". Check data registered in platform");
+    }
+
+    public static function urlNotWorking(string $url){
+        return new static("Bad credentials exception: ".$url." not working. Check data registered and check if url stil.");
     }
 }
