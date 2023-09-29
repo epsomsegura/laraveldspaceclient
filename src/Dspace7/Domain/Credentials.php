@@ -8,17 +8,24 @@ use Epsomsegura\Laraveldspaceclient\Shared\Domain\UrlValidator;
 
 class Credentials
 {
-    private ?string $url;
     private ?string $email;
     private ?string $pass;
+    private ?string $url;
+    private ?string $domain;
     private EmailValidator $emailValidator;
     private UrlValidator $urlValidator;
 
-    public function __construct()
+    public function __construct(
+        ?string $email = null,
+        ?string $pass = null,
+        ?string $url = null,
+        ?string $domain = null
+        )
     {
-        $this->email = config('laravel-dspace-client.dspace_api_email');
-        $this->pass = config('laravel-dspace-client.dspace_api_pass');
-        $this->url = config('laravel-dspace-client.dspace_api_url');
+        $this->email = $email;
+        $this->pass = $pass;
+        $this->url = $url;
+        $this->domain = $domain;
 
         $this->emailValidator = new EmailValidator($this->email);
         $this->urlValidator = new UrlValidator($this->url);
@@ -30,14 +37,22 @@ class Credentials
     {
         return $this->email;
     }
+    
     public function pass(): ?string
     {
         return $this->pass;
     }
+    
     public function url(): ?string
     {
         return $this->url;
     }
+    
+    public function domain(): ?string
+    {
+        return $this->domain;
+    }
+    
 
     protected function errorHandler()
     {
