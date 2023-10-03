@@ -18,6 +18,12 @@ final class ItemRequests implements ItemContract
         $this->requester = new GuzzleRequester();
     }
 
+    public function create(Item $item, string $collectionUUID) : ?Item
+    {
+        
+        return null;
+    }
+
     public function findOneByHandle(string $handle): ?Item
     {
         $item = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["query" => $handle])->request();

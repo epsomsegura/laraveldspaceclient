@@ -5,10 +5,10 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Domain;
 class Collection
 {
 
-    private string $_id;
-    private string $_uuid;
+    private ?string $_id;
+    private ?string $_uuid;
     private string $_name;
-    private string $_handle;
+    private ?string $_handle;
     private $_metadata;
 
     public function __construct(
