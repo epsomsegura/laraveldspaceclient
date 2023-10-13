@@ -18,10 +18,20 @@ final class ItemRequests implements ItemContract
         $this->requester = new GuzzleRequester();
     }
 
-    public function create(Item $item, string $collectionUUID) : ?Item
+    public function create($item, string $collectionUUID) : ?Item
     {
-        
-        return null;
+        $item = $this->requester->setMethod('post')->setEndpoint('core/items')->setQuery(["owningCollection" => $collectionUUID])->setBody(json_encode($item))->setHeaders(['Content-Type'=>'application/json'])->request();
+        return new Item(
+            $item->id,
+            $item->uuid,
+            $item->name,
+            $item->handle,
+            json_decode(json_encode($item->metadata), true),
+            $item->inArchive,
+            $item->discoverable,
+            $item->withdrawn,
+            $item->type
+        );;
     }
 
     public function findOneByHandle(string $handle): ?Item
@@ -51,6 +61,9 @@ final class ItemRequests implements ItemContract
                     $item->name,
                     $item->handle,
                     json_decode(json_encode($item->metadata), true),
+                    $item->inArchive,
+                    $item->discoverable,
+                    $item->withdrawn,
                     $item->type
                 );
             }

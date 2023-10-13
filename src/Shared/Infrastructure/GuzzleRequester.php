@@ -7,6 +7,7 @@ use GuzzleHttp\Cookie\CookieJar;
 class GuzzleRequester
 {
     private $bearerToken;
+    private $body;
     private $client;
     private $dspaceCookie;
     private $dspaceToken;
@@ -30,6 +31,11 @@ class GuzzleRequester
     public function bearerToken()
     {
         return $this->bearerToken;
+    }
+    
+    public function body()
+    {
+        return $this->body;
     }
     
     public function dspaceCookie()
@@ -84,6 +90,12 @@ class GuzzleRequester
                 break;
         }
         return $response;
+    }
+
+    public function setBody($body)
+    {
+        $this->body = $body;
+        return $this;
     }
 
     public function setCookie(CookieJar $cookie)
@@ -166,6 +178,9 @@ class GuzzleRequester
         }
         if ($this->query) {
             $this->options['query'] = $this->query;
+        }
+        if($this->body){
+            $this->options['body'] = $this->body;
         }
     }
 }

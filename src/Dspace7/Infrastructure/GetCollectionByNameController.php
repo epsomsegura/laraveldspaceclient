@@ -22,6 +22,7 @@ final class GetCollectionByNameController
     {
         $collection = (new GetCollectionByNameUseCase($this->collectionRequest))->handler($request->name);
         dd($collection);
+        return $collection;
     }
 
 }

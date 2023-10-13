@@ -21,7 +21,7 @@ final class GetItemByHandleController
     public function handler(Request $request)
     {
         $item = (new GetItemByHandleUseCase($this->itemRequests))->handler($request->handle);
-        dd($item);
+        return $item;
     }
 
 }

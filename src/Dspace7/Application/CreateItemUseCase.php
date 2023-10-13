@@ -18,8 +18,8 @@ final class CreateItemUseCase
         $this->itemContract = $itemContract;
     }
 
-    public function handler(Item $item,string $collectionUUID)
+    public function handler($item,string $collectionUUID)
     {
-        return $this->itemContract->create($collectionUUID);
+        return $this->itemContract->create($item,$collectionUUID);
     }
 }

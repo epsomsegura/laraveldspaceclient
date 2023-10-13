@@ -18,7 +18,7 @@ final class CollectionRequests implements CollectionContract
         $this->requester = new GuzzleRequester();
     }
 
-    public function findOneByName(string $name): ?Collection
+    public function findOneByName(string $name): Collection
     {
         $collection = $this->requester->setMethod('get')->setEndpoint('core/collections/search/findAdminAuthorized')->setQuery(["query" => $name])->request();
         if (!array_key_exists('_embedded', get_object_vars($collection))) {
@@ -34,7 +34,7 @@ final class CollectionRequests implements CollectionContract
     {
         $uniqueCollections = [];
         foreach ($collections as $collection) {
-            if ($collection->name === $name) {
+            if ($collection->name == $name) {
                 $uniqueCollections[] = new Collection(
                     $collection->id,
                     $collection->uuid,

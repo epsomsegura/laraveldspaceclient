@@ -7,7 +7,7 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Item;
 
 interface ItemContract
 {
-    public function create(Item $item, string $collectionId);
+    public function create($item, string $collectionId);
     
     public function findOneByHandle(string $handle);
     

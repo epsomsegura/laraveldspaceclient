@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
+use Epsomsegura\Laraveldspaceclient\Dspace7\Application\CreateItemUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByNameUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetItemByHandleUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
@@ -28,8 +29,12 @@ final class CreateItemController
     public function handler(Request $request)
     {
         $collection = (new GetCollectionByNameUseCase($this->collectionRequests))->handler($request->collectionName);
-        dd($collection);
-        $item = (new GetItemByHandleUseCase($this->itemRequests))->handler($request->item, $collection->uuid());
+        $item = (new CreateItemUseCase($this->itemRequests))->handler($request->item, $collection->uuid());
+        return $item;
+    }
+
+    private function createItem($itemRequest){
+        return $itemRequest;
     }
 
 }
