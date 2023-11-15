@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/package-test', function(Request $request){
-    // return (new GetCollectionByNameController(new CollectionRequests()))->handler($request);
-    return (new GetItemByHandleController(new ItemRequests()))->handler($request);
+    $item = (new GetItemByHandleController(new ItemRequests()))->handler($request);    
+    return response()->json($item->toArray(),200);
 });
 Route::post('/package-test',function(Request $request){
     return (new CreateItemController(new CollectionRequests(),new ItemRequests()))->handler($request);

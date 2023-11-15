@@ -7,6 +7,7 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\ItemContract;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Exceptions\ItemExceptions;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Item;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Metadata;
 use Epsomsegura\Laraveldspaceclient\Shared\Infrastructure\GuzzleRequester;
 
 final class ItemRequests implements ItemContract
@@ -55,12 +56,25 @@ final class ItemRequests implements ItemContract
         foreach ($items as $item) {
             $item = $item->_embedded->indexableObject;
             if ($item->handle === $handle && $item->type === 'item') {
+                foreach($item->metadata as $key => $metadata){
+                    $itemMetadata[$key] = NULL;
+                    foreach($metadata as $metadataItem){
+                        $itemMetadata[$key][] = new Metadata(
+                            $metadataItem->value,
+                            $metadataItem->language ?? null,
+                            $metadataItem->authority ?? null,
+                            $metadataItem->confidence ?? null,
+                            $metadataItem->place ?? null,
+                        );
+
+                    }
+                }
                 $uniqueItems[] = new Item(
                     $item->id,
                     $item->uuid,
                     $item->name,
                     $item->handle,
-                    json_decode(json_encode($item->metadata), true),
+                    $itemMetadata,
                     $item->inArchive,
                     $item->discoverable,
                     $item->withdrawn,

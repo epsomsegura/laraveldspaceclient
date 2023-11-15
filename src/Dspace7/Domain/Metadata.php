@@ -50,4 +50,15 @@ class Metadata
     {
         return collect($this);
     }
+
+    public function toArray()
+    {
+        return [
+            "value" => $this->_value,
+            "language" => $this->_language,
+            "authority" => $this->_authority,
+            "confidence" => $this->_confidence,
+            "place" => $this->_place,
+        ];
+    }
 }

@@ -2,9 +2,10 @@
 
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Domain;
 
+use Maatwebsite\Excel\Concerns\ToArray;
+
 class Item
 {
-
     private ?string $_id;
     private ?string $_uuid;
     private string $_name;
@@ -30,46 +31,46 @@ class Item
         $this->_uuid = $uuid;
         $this->_name = $name;
         $this->_handle = $handle;
-        $this->_metadata = $metadata;
+        $this->_metadata = $metadata ?? [];
         $this->_inArchive = $inArchive;
         $this->_discoverable = $discoverable;
         $this->_withdraw = $withdraw;
         $this->_type = $type;
     }
 
-    public function id() : ?string
+    public function id(): ?string
     {
         return $this->_id;
     }
-    public function uuid() : ?string
+    public function uuid(): ?string
     {
         return $this->_uuid;
     }
-    public function name() : ?string
+    public function name(): ?string
     {
         return $this->_name;
     }
-    public function handle() : ?string
+    public function handle(): ?string
     {
         return $this->_handle;
     }
-    public function metadata() : ?array
+    public function metadata(): ?array
     {
         return $this->_metadata;
     }
-    public function inArchive() : ?bool
+    public function inArchive(): ?bool
     {
         return $this->_inArchive;
     }
-    public function discoverable() : ?bool
+    public function discoverable(): ?bool
     {
         return $this->_discoverable;
     }
-    public function withdraw() : ?bool
+    public function withdraw(): ?bool
     {
         return $this->_withdraw;
     }
-    public function type() : string
+    public function type(): string
     {
         return $this->_type;
     }
@@ -77,5 +78,26 @@ class Item
     public function toCollection()
     {
         return collect($this);
+    }
+
+    public function toArray()
+    {
+        $metadataItems = [];
+        foreach ($this->_metadata as $key => $metadata) {
+            foreach ($metadata as $metadataItem) {
+                $metadataItems[$key][] = $metadataItem->toArray();
+            }
+        }
+        return [
+            "id" => $this->_id,
+            "uuid" => $this->_uuid,
+            "name" => $this->_name,
+            "handle" => $this->_handle,
+            "metadata" => $metadataItems,
+            "inArchive" => $this->_inArchive,
+            "discoverable" => $this->_discoverable,
+            "withdraw" => $this->_withdraw,
+            "type" => $this->_type,
+        ];
     }
 }
