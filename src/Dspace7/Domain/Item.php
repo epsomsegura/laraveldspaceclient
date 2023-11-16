@@ -82,18 +82,12 @@ class Item
 
     public function toArray()
     {
-        $metadataItems = [];
-        foreach ($this->_metadata as $key => $metadata) {
-            foreach ($metadata as $metadataItem) {
-                $metadataItems[$key][] = $metadataItem->toArray();
-            }
-        }
         return [
             "id" => $this->_id,
             "uuid" => $this->_uuid,
             "name" => $this->_name,
             "handle" => $this->_handle,
-            "metadata" => $metadataItems,
+            "metadata" => Metadata::metadataArrayToArray($this->_metadata),
             "inArchive" => $this->_inArchive,
             "discoverable" => $this->_discoverable,
             "withdraw" => $this->_withdraw,

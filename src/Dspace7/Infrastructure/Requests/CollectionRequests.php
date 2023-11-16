@@ -7,6 +7,7 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Collection;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\CollectionContract;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Exceptions\CollectionExceptions;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Metadata;
 use Epsomsegura\Laraveldspaceclient\Shared\Infrastructure\GuzzleRequester;
 
 final class CollectionRequests implements CollectionContract
@@ -40,7 +41,8 @@ final class CollectionRequests implements CollectionContract
                     $collection->uuid,
                     $collection->name,
                     $collection->handle,
-                    json_decode(json_encode($collection->metadata), true)
+                    []
+                    // Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata),TRUE)),
                 );
             }
         }

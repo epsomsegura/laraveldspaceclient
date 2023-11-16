@@ -2,13 +2,15 @@
 
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Domain;
 
+use Maatwebsite\Excel\Concerns\ToArray;
+
 class Metadata
 {
     private string $_value;
     private ?string $_language;
     private ?string $_authority;
-    private ?string $_confidence;
-    private ?string $_place;
+    private ?int $_confidence;
+    private ?int $_place;
 
 
     public function __construct(
@@ -46,6 +48,42 @@ class Metadata
         return $this->_place;
     }
 
+    public static function metadataArrayToArray(array $metadata) : array
+    {
+        $metadataArray = [];
+        foreach ($metadata as $key => $metadataElements) {
+            foreach ($metadataElements as $metadataElement) {
+                $metadataElement = is_object($metadataElement) ? $metadataElement->toArray() : $metadataElement;
+                $metadataArray[$key][] = [
+                    "value" => $metadataElement["value"],
+                    "language" => $metadataElement["language"] ?? null,
+                    "authority" => $metadataElement["authority"] ?? null,
+                    "confidence" => $metadataElement["confidence"] ?? null,
+                    "place" => $metadataElement["place"] ?? null,
+                ];
+            }
+        }
+        return $metadataArray;
+    }
+
+    public static function arrayToMetadataArray(array $metadata): array
+    {
+        $metadataArray = [];
+        foreach ($metadata as $key => $metadataElements) {
+            foreach ($metadataElements as $metadataElement) {
+                $metadataElement = is_object($metadataElement) ? $metadataElement->toArray() : $metadataElement;
+                $metadataArray[$key][] = new Metadata(
+                    $metadataElement["value"],
+                    $metadataElement["language"] ?? null,
+                    $metadataElement["authority"] ?? null,
+                    $metadataElement["confidence"] ?? null,
+                    $metadataElement["place"] ?? null,
+                );
+            }
+        }
+        return $metadataArray;
+    }
+
     public function toCollection()
     {
         return collect($this);
@@ -58,7 +96,7 @@ class Metadata
             "language" => $this->_language,
             "authority" => $this->_authority,
             "confidence" => $this->_confidence,
-            "place" => $this->_place,
+            "place" => $this->_place
         ];
     }
 }

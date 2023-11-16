@@ -2,7 +2,7 @@
 
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Domain;
 
-class Collection
+class Community
 {
 
     private ?string $_id;
@@ -58,7 +58,7 @@ class Collection
             "uuid" => $this->_uuid,
             "name" => $this->_name,
             "handle" => $this->_handle,
-            // "metadata" => Metadata::toMetadataArray($this->_metadata),
+            "metadata" => Metadata::metadataArrayToArray($this->_metadata),
         ];
     }
 }

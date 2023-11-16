@@ -27,12 +27,12 @@ final class ItemRequests implements ItemContract
             $item->uuid,
             $item->name,
             $item->handle,
-            json_decode(json_encode($item->metadata), true),
+            Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata),TRUE)),
             $item->inArchive,
             $item->discoverable,
             $item->withdrawn,
             $item->type
-        );;
+        );
     }
 
     public function findOneByHandle(string $handle): ?Item
@@ -56,25 +56,12 @@ final class ItemRequests implements ItemContract
         foreach ($items as $item) {
             $item = $item->_embedded->indexableObject;
             if ($item->handle === $handle && $item->type === 'item') {
-                foreach($item->metadata as $key => $metadata){
-                    $itemMetadata[$key] = NULL;
-                    foreach($metadata as $metadataItem){
-                        $itemMetadata[$key][] = new Metadata(
-                            $metadataItem->value,
-                            $metadataItem->language ?? null,
-                            $metadataItem->authority ?? null,
-                            $metadataItem->confidence ?? null,
-                            $metadataItem->place ?? null,
-                        );
-
-                    }
-                }
                 $uniqueItems[] = new Item(
                     $item->id,
                     $item->uuid,
                     $item->name,
                     $item->handle,
-                    $itemMetadata,
+                    Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata),TRUE)),
                     $item->inArchive,
                     $item->discoverable,
                     $item->withdrawn,

@@ -12,7 +12,7 @@ final class CreateItemUseCase
     private $itemContract;
 
     public function __construct(
-        ItemContract $itemContract,
+        ItemContract $itemContract
     )
     {
         $this->itemContract = $itemContract;
