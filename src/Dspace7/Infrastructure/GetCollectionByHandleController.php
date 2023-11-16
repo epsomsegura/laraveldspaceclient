@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
-use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByNameUseCase;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByHandleUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
 use Illuminate\Http\Request;
 
-final class GetCollectionByNameController
+final class GetCollectionByHandleController
 {
 
     private $collectionRequest;
@@ -20,7 +20,7 @@ final class GetCollectionByNameController
 
     public function handler(Request $request)
     {
-        $collection = (new GetCollectionByNameUseCase($this->collectionRequest))->handler($request->name);
+        $collection = (new GetCollectionByHandleUseCase($this->collectionRequest))->handler($request->handle);
         return $collection;
     }
 

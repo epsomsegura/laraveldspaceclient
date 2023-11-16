@@ -58,7 +58,7 @@ class Collection
             "uuid" => $this->_uuid,
             "name" => $this->_name,
             "handle" => $this->_handle,
-            // "metadata" => Metadata::toMetadataArray($this->_metadata),
+            "metadata" => Metadata::metadataArrayToArray($this->_metadata),
         ];
     }
 }

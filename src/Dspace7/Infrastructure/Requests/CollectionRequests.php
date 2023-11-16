@@ -19,33 +19,94 @@ final class CollectionRequests implements CollectionContract
         $this->requester = new GuzzleRequester();
     }
 
-    public function findOneByName(string $name): Collection
+    public function create($collection, string $communityUUID): ?Collection
     {
-        $collection = $this->requester->setMethod('get')->setEndpoint('core/collections/search/findAdminAuthorized')->setQuery(["query" => $name])->request();
-        if (!array_key_exists('_embedded', get_object_vars($collection))) {
-            throw CollectionExceptions::notFound();
-        }
-        if (sizeof($collection->_embedded->collections) <= 0) {
-            throw CollectionExceptions::empty();
-        }
-        return $this->getCollection($collection->_embedded->collections, $name);
+        $collection = $this->requester->setMethod('post')->setEndpoint('core/collections')->setQuery(["parent" => $communityUUID])->setBody(json_encode($collection))->setHeaders(['Content-Type' => 'application/json'])->request();
+        return new Collection(
+            $collection->id,
+            $collection->uuid,
+            $collection->name,
+            $collection->handle,
+            Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata), TRUE))
+        );
+    }
+    public function delete($uuid): string
+    {
+        $this->requester->setMethod('delete')->setEndpoint('core/collections/' . $uuid)->setHeaders(['Content-Type' => 'application/json'])->request();
+        return "success";
     }
 
-    private function getCollection(array $collections, string $name) : Collection
+    public function findAll(): array
+    {
+        $collections = $this->requester->setMethod('get')->setEndpoint('core/collections')->request();
+        if (!array_key_exists('_embedded', get_object_vars($collections))) {
+            throw CollectionExceptions::notFound();
+        }
+        if (sizeof($collections->_embedded->collections) <= 0) {
+            throw CollectionExceptions::empty();
+        }
+        return $this->getCollections($collections->_embedded->collections);
+    }
+
+    public function findOneByUUID(string $uuid): Collection
+    {
+        $collection = $this->requester->setMethod('get')->setEndpoint('core/collections/' . $uuid)->request();
+        return $this->getCollections([$collection])[0];
+    }
+    public function findOneByHandle(string $handle): Collection
+    {
+        $collections = $this->requester->setMethod('get')->setEndpoint('core/collections/search/findAdminAuthorized')->setQuery(["query" => $handle])->request();
+        if (!array_key_exists('_embedded', get_object_vars($collections))) {
+            throw CollectionExceptions::notFound();
+        }
+        $collections = array_filter($collections->_embedded->collections,function($collection) use ($handle){
+            return ($collection->handle === $handle && $collection->type === "collection");
+        });
+        if (sizeof($collections) <= 0) {
+            throw CollectionExceptions::empty();
+        }
+        return $this->getCollections($collections)[0];
+    }
+
+    public function findOneByName(string $name): Collection
+    {
+        $collections = $this->requester->setMethod('get')->setEndpoint('core/collections/search/findAdminAuthorized')->setQuery(["query" => $name])->request();
+        if (!array_key_exists('_embedded', get_object_vars($collections))) {
+            throw CollectionExceptions::notFound();
+        }
+        $collections = array_filter($collections->_embedded->collections,function($collection) use ($name){
+            return ($collection->name === $name && $collection->type === "collection");
+        });
+        if (sizeof($collections) <= 0) {
+            throw CollectionExceptions::empty();
+        }
+        return $this->getCollections($collections)[0];
+    }
+
+    public function update($collection, string $uuid): Collection
+    {
+        $collection = $this->requester->setMethod('put')->setEndpoint('core/collections/' . $uuid)->setBody(json_encode($collection))->setHeaders(['Content-Type' => 'application/json'])->request();
+        return new Collection(
+            $collection->id,
+            $collection->uuid,
+            $collection->name,
+            $collection->handle,
+            Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata), TRUE))
+        );
+    }
+
+    private function getCollections(array $collections) : array
     {
         $uniqueCollections = [];
         foreach ($collections as $collection) {
-            if ($collection->name == $name) {
-                $uniqueCollections[] = new Collection(
-                    $collection->id,
-                    $collection->uuid,
-                    $collection->name,
-                    $collection->handle,
-                    []
-                    // Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata),TRUE)),
-                );
-            }
+            $uniqueCollections[] = new Collection(
+                $collection->id,
+                $collection->uuid,
+                $collection->name,
+                $collection->handle,
+                Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata),TRUE)),
+            );
         }
-        return $uniqueCollections[0];
+        return $uniqueCollections;
     }
 }

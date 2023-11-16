@@ -6,7 +6,7 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Application;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\CommunityContract;
 
-final class GetCommunityByNameUseCase
+final class UpdateCommunityUseCase
 {
     private $communityContract;
 
@@ -17,8 +17,8 @@ final class GetCommunityByNameUseCase
         $this->communityContract = $communityContract;
     }
 
-    public function handler(string $name)
+    public function handler($community,string $uuid)
     {
-        return $this->communityContract->findOneByName($name);
+        return $this->communityContract->update($community,$uuid);
     }
 }

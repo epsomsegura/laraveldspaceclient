@@ -7,7 +7,7 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Application;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Collection;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\CollectionContract;
 
-final class GetCollectionByNameUseCase
+final class GetCollectionByUUIDUseCase
 {
     private $collectionContract;
 
@@ -18,8 +18,8 @@ final class GetCollectionByNameUseCase
         $this->collectionContract = $collectionContract;
     }
 
-    public function handler(string $name) : Collection
+    public function handler(string $uuid) : Collection
     {
-        return $this->collectionContract->findOneByName($name);
+        return $this->collectionContract->findOneByUUID($uuid);
     }
 }
