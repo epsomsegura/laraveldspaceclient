@@ -10,6 +10,8 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Item;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Metadata;
 use Epsomsegura\Laraveldspaceclient\Shared\Infrastructure\GuzzleRequester;
 
+use function PHPUnit\Framework\objectHasAttribute;
+
 final class ItemRequests implements ItemContract
 {
     private $requester;
@@ -19,56 +21,111 @@ final class ItemRequests implements ItemContract
         $this->requester = new GuzzleRequester();
     }
 
-    public function create($item, string $collectionUUID) : ?Item
+    public function create($item, string $collectionUUID): ?Item
     {
-        $item = $this->requester->setMethod('post')->setEndpoint('core/items')->setQuery(["owningCollection" => $collectionUUID])->setBody(json_encode($item))->setHeaders(['Content-Type'=>'application/json'])->request();
+        $item = $this->requester->setMethod('post')->setEndpoint('core/items')->setQuery(["owningCollection" => $collectionUUID])->setBody(json_encode($item))->setHeaders(['Content-Type' => 'application/json'])->request();
         return new Item(
             $item->id,
             $item->uuid,
             $item->name,
             $item->handle,
-            Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata),TRUE)),
+            Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata), TRUE)),
             $item->inArchive,
             $item->discoverable,
             $item->withdrawn,
             $item->type
         );
     }
-
-    public function findOneByHandle(string $handle): ?Item
+    public function delete($uuid): string
     {
-        $item = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["query" => $handle])->request();
-        if (!array_key_exists('_embedded', get_object_vars($item))) {
+        $this->requester->setMethod('delete')->setEndpoint('core/items/' . $uuid)->setHeaders(['Content-Type' => 'application/json'])->request();
+        return "success";
+    }
+    public function findAll(): array
+    {
+        $items = $this->requester->setMethod('get')->setEndpoint('core/items')->request();
+        if (!array_key_exists('_embedded', get_object_vars($items))) {
             throw ItemExceptions::notFound();
         }
-        if ($item->_embedded->searchResult && !array_key_exists('_embedded', get_object_vars($item->_embedded->searchResult))) {
-            throw ItemExceptions::notFound();
-        }
-        if (sizeof($item->_embedded->searchResult->_embedded->objects) <= 0) {
+        if (sizeof($items->_embedded->items) <= 0) {
             throw ItemExceptions::empty();
         }
-        return $this->getItem($item->_embedded->searchResult->_embedded->objects, $handle);
+        return $this->getItems($items->_embedded->items);
     }
-
-    private function getItem(array $items, string $handle): Item
+    public function findOneByHandle(string $handle): ?Item
+    {
+        $items = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["query" => $handle])->request();
+        if (!array_key_exists('_embedded', get_object_vars($items))) {
+            throw ItemExceptions::notFound();
+        }
+        if ($items->_embedded->searchResult && !array_key_exists('_embedded', get_object_vars($items->_embedded->searchResult))) {
+            throw ItemExceptions::notFound();
+        }
+        $items = array_filter($items->_embedded->searchResult->_embedded->objects, function($item) use ($handle){
+            $item = $item->_embedded->indexableObject;
+            return ($item->handle === $handle && $item->type === "item");
+        });
+        if (sizeof($items) <= 0) {
+            throw ItemExceptions::empty();
+        }
+        return $this->getItems($items)[0];
+    }
+    public function findOneByName(string $name): ?Item
+    {
+        $name = preg_replace('/[°!"#$%&\/()=?\'¡]/', '',mb_strimwidth($name,0,50));
+        $items = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["query" => $name])->request();
+        if (!array_key_exists('_embedded', get_object_vars($items))) {
+            throw ItemExceptions::notFound();
+        }
+        if ($items->_embedded->searchResult && !array_key_exists('_embedded', get_object_vars($items->_embedded->searchResult))) {
+            throw ItemExceptions::notFound();
+        }
+        $items = array_filter($items->_embedded->searchResult->_embedded->objects,function($item) use ($name){
+            $itemName = preg_replace('/[°!"#$%&\/()=?\'¡]/', '',$item->_embedded->indexableObject->name);
+            return (str_contains($itemName, $name) && $item->_embedded->indexableObject->type === "item");
+        });
+        if (sizeof($items) <= 0) {
+            throw ItemExceptions::empty();
+        }
+        return $this->getItems($items)[0];
+    }
+    public function findOneByUUID(string $uuid): Item
+    {
+        $item = $this->requester->setMethod('get')->setEndpoint('core/items/' . $uuid)->request();
+        return $this->getItems([$item])[0];
+    }
+    public function update($item, string $uuid): ?Item
+    {
+        $item = $this->requester->setMethod('put')->setEndpoint('core/items/'.$uuid)->setBody(json_encode($item))->setHeaders(['Content-Type' => 'application/json'])->request();
+        return new Item(
+            $item->id,
+            $item->uuid,
+            $item->name,
+            $item->handle,
+            Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata), TRUE)),
+            $item->inArchive,
+            $item->discoverable,
+            $item->withdrawn,
+            $item->type
+        );
+    }
+    private function getItems(array $items): array
     {
         $uniqueItems = [];
         foreach ($items as $item) {
-            $item = $item->_embedded->indexableObject;
-            if ($item->handle === $handle && $item->type === 'item') {
-                $uniqueItems[] = new Item(
-                    $item->id,
-                    $item->uuid,
-                    $item->name,
-                    $item->handle,
-                    Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata),TRUE)),
-                    $item->inArchive,
-                    $item->discoverable,
-                    $item->withdrawn,
-                    $item->type
-                );
-            }
+            $item = (is_array($item) ? (object)$item : (property_exists($item,"_embedded") ? $item->_embedded->indexableObject : $item));
+            $uniqueItems[] = new Item(
+                $item->id,
+                $item->uuid,
+                $item->name,
+                $item->handle,
+                Metadata::arrayToMetadataArray(json_decode(json_encode($item->metadata), TRUE)),
+                $item->inArchive,
+                $item->discoverable,
+                $item->withdrawn,
+                $item->type
+            );
         }
-        return $uniqueItems[0];
+        return $uniqueItems;
     }
 }

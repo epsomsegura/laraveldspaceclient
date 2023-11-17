@@ -5,6 +5,7 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityContro
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateItemController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCommunityController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteItemController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByHandleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByNameController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByUUIDController;
@@ -14,11 +15,15 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunityByHandleC
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunityByNameController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunityByUUIDController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemByHandleController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemByNameController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemByUUIDController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemsController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityRequests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateCommunityController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +64,7 @@ Route::group(["prefix"=>"communities"],function(){
 
 
 
+
 Route::group(["prefix"=>"collections"],function(){
     Route::get("",function(Request $request){
         if($request->has('handle')){
@@ -95,6 +101,37 @@ Route::group(["prefix"=>"collections"],function(){
 
 
 
+Route::group(["prefix"=>"items"],function(){
+    Route::get("",function(Request $request){
+        if($request->has('handle')){
+            $item = (new GetItemByHandleController(new ItemRequests()))->handler($request);
+            return response()->json($item->toArray(),200);
+        }
+        if($request->has('name')){
+            $item = (new GetItemByNameController(new ItemRequests()))->handler($request);
+            return response()->json($item->toArray(),200);
+        }
+        $items = (new GetItemsController(new ItemRequests()))->handler($request);
+        foreach($items as $key => $item){ $items[$key] = $item->toArray(); }
+        return response()->json($items,200);
+    });
+    Route::get("{uuid}",function(Request $request,string $uuid){
+        $item = (new GetItemByUUIDController(new ItemRequests))->handler($request,$uuid);
+        return response()->json($item->toArray(),200);
+    });
+    Route::post("",function(Request $request){
+        $item = (new CreateItemController(new CollectionRequests(),new ItemRequests()))->handler($request);
+        return response()->json($item->toArray(),200);
+    });
+    Route::put("{uuid}",function(Request $request,string $uuid){
+        $item = (new UpdateItemController(new ItemRequests))->handler($request,$uuid);
+        return response()->json($item->toArray(),200);
+    });
+    Route::delete("{uuid}",function(Request $request,string $uuid){
+        $response = (new DeleteItemController(new ItemRequests))->handler($uuid);
+        return response()->json(["message" => $response],200);
+    });
+});
 
 
 Route::get('/package-test', function(Request $request){

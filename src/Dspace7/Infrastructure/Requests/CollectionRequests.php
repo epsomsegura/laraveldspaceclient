@@ -47,12 +47,6 @@ final class CollectionRequests implements CollectionContract
         }
         return $this->getCollections($collections->_embedded->collections);
     }
-
-    public function findOneByUUID(string $uuid): Collection
-    {
-        $collection = $this->requester->setMethod('get')->setEndpoint('core/collections/' . $uuid)->request();
-        return $this->getCollections([$collection])[0];
-    }
     public function findOneByHandle(string $handle): Collection
     {
         $collections = $this->requester->setMethod('get')->setEndpoint('core/collections/search/findAdminAuthorized')->setQuery(["query" => $handle])->request();
@@ -67,7 +61,11 @@ final class CollectionRequests implements CollectionContract
         }
         return $this->getCollections($collections)[0];
     }
-
+    public function findOneByUUID(string $uuid): Collection
+    {
+        $collection = $this->requester->setMethod('get')->setEndpoint('core/collections/' . $uuid)->request();
+        return $this->getCollections([$collection])[0];
+    }
     public function findOneByName(string $name): Collection
     {
         $collections = $this->requester->setMethod('get')->setEndpoint('core/collections/search/findAdminAuthorized')->setQuery(["query" => $name])->request();

@@ -32,9 +32,4 @@ final class CreateItemController
         $item = (new CreateItemUseCase($this->itemRequests))->handler($request->item, $collection->uuid());
         return $item;
     }
-
-    private function createItem($itemRequest){
-        return $itemRequest;
-    }
-
 }
