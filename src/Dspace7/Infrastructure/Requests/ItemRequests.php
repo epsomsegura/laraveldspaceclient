@@ -47,10 +47,22 @@ final class ItemRequests implements ItemContract
         if (!array_key_exists('_embedded', get_object_vars($items))) {
             throw ItemExceptions::notFound();
         }
-        if (sizeof($items->_embedded->items) <= 0) {
-            throw ItemExceptions::empty();
-        }
         return $this->getItems($items->_embedded->items);
+    }
+    public function findAllByCollectionUUID(string $collectionUUID) : array
+    {
+        $items = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["scope"=>$collectionUUID])->request();
+        if (!array_key_exists('_embedded', get_object_vars($items))) {
+            throw ItemExceptions::notFound();
+        }
+        if ($items->_embedded->searchResult && !array_key_exists('_embedded', get_object_vars($items->_embedded->searchResult))) {
+            throw ItemExceptions::notFound();
+        }
+        $items = array_filter($items->_embedded->searchResult->_embedded->objects, function($item){
+            $item = $item->_embedded->indexableObject;
+            return ($item->type === "item");
+        });
+        return $this->getItems($items);
     }
     public function findOneByHandle(string $handle): ?Item
     {

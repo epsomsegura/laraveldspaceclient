@@ -30,6 +30,17 @@ final class CommunityRequests implements CommunityContract
             Metadata::arrayToMetadataArray(json_decode(json_encode($community->metadata), TRUE))
         );
     }
+    public function createWithParent($community,$communityParentUUID): ?Community
+    {
+        $community = $this->requester->setMethod('post')->setEndpoint('core/communities')->setQuery(["parent"=>$communityParentUUID])->setBody(json_encode($community))->setHeaders(['Content-Type' => 'application/json'])->request();
+        return new Community(
+            $community->id,
+            $community->uuid,
+            $community->name,
+            $community->handle,
+            Metadata::arrayToMetadataArray(json_decode(json_encode($community->metadata), TRUE))
+        );
+    }
     public function delete($uuid): string
     {
         $this->requester->setMethod('delete')->setEndpoint('core/communities/' . $uuid)->setHeaders(['Content-Type' => 'application/json'])->request();
@@ -42,12 +53,24 @@ final class CommunityRequests implements CommunityContract
         if (!array_key_exists('_embedded', get_object_vars($communities))) {
             throw CommunityExceptions::notFound();
         }
-        if (sizeof($communities->_embedded->communities) <= 0) {
-            throw CommunityExceptions::empty();
+        return $this->getCommunities($communities->_embedded->communities);
+    }
+    public function findAllIsParent(): array
+    {
+        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities/search/top')->request();
+        if (!array_key_exists('_embedded', get_object_vars($communities))) {
+            throw CommunityExceptions::notFound();
         }
         return $this->getCommunities($communities->_embedded->communities);
     }
-
+    public function findAllWhereParent(string $communityParentUUID): array
+    {
+        $subcommunities = $this->requester->setMethod('get')->setEndpoint('core/communities/'.$communityParentUUID.'/subcommunities')->request();
+        if (!array_key_exists('_embedded', get_object_vars($subcommunities))) {
+            throw CommunityExceptions::notFound();
+        }
+        return $this->getCommunities($subcommunities->_embedded->subcommunities);
+    }
     public function findOneByUUID(string $uuid): Community
     {
         $community = $this->requester->setMethod('get')->setEndpoint('core/communities/' . $uuid)->request();
