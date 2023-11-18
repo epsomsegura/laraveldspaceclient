@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -16,11 +16,9 @@ final class CreateCommunityWithParentController
     {
         $this->communityRequest = new CommunityRequests();
     }
-
     public function handler(string $communityParentName, array $community)
     {
         $communityParent = (new GetCommunityByNameUseCase($this->communityRequest))->handler($communityParentName);
         return (new CreateCommunityWithParentUseCase($this->communityRequest))->handler($community, $communityParent->uuid());
     }
-
 }

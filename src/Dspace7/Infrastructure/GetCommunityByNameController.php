@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -10,12 +10,10 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityReq
 final class GetCommunityByNameController
 {
     private $communityRequest;
-
     public function __construct()
     {
         $this->communityRequest = new CommunityRequests();
     }
-
     public function handler(string $name)
     {
         return (new GetCommunityByNameUseCase($this->communityRequest))->handler($name);

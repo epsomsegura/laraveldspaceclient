@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -11,15 +11,12 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRe
 final class UpdateCollectionController
 {
     private $collectionRequests;
-
     public function __construct()
     {
         $this->collectionRequests = new CollectionRequests();
     }
-
     public function handler(array $collection, string $uuid)
     {
         return (new UpdateCollectionUseCase($this->collectionRequests))->handler($collection, $uuid);
     }
-
 }

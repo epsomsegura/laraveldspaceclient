@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -11,15 +11,12 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityReq
 final class UpdateCommunityController
 {
     private $communityRequest;
-
     public function __construct()
     {
         $this->communityRequest = new CommunityRequests();
     }
-
     public function handler(array $community, string $uuid)
     {
         return (new UpdateCommunityUseCase($this->communityRequest))->handler($community, $uuid);
     }
-
 }

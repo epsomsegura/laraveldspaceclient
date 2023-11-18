@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -9,17 +9,13 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests
 
 final class GetItemByNameController
 {
-
     private $itemRequests;
-
     public function __construct()
     {
         $this->itemRequests = new ItemRequests();
     }
-
     public function handler(string $name)
     {
         return (new GetItemByNameUseCase($this->itemRequests))->handler($name);
     }
-
 }

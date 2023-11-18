@@ -105,7 +105,7 @@ Route::group(["prefix" => "collections"], function () {
         return response()->json(((new GetCollectionByUUIDController)->handler($uuid))->toArray(), 200);
     });
     Route::post("", function (Request $request) {
-        return response()->json(((new CreateCollectionController)->handler($request))->toArray(), 200);
+        return response()->json(((new CreateCollectionController)->handler($request->collection,$request->communityName))->toArray(), 200);
     });
     Route::put("{uuid}", function (Request $request, string $uuid) {
         return response()->json(((new UpdateCollectionController)->handler($request->collection, $uuid))->toArray(), 200);

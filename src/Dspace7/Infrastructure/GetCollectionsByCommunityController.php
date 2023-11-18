@@ -13,11 +13,11 @@ final class GetCollectionsByCommunityController
 {
     private $collectionRequest;
     private $communityRequests;
-    public function __construct() {
+    public function __construct()
+    {
         $this->collectionRequest = new CollectionRequests();
         $this->communityRequests = new CommunityRequests();
     }
-
     public function handler(string $communityName)
     {
         $community = (new GetCommunityByNameUseCase($this->communityRequests))->handler($communityName);

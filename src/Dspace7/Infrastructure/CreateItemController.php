@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -12,16 +12,13 @@ use Illuminate\Http\Request;
 
 final class CreateItemController
 {
-
     private $collectionRequests;
     private $itemRequests;
-
     public function __construct()
     {
         $this->collectionRequests = new CollectionRequests();
         $this->itemRequests = new ItemRequests();
     }
-
     public function handler(array $item, string $collectionName)
     {
         $collection = (new GetCollectionByNameUseCase($this->collectionRequests))->handler($collectionName);

@@ -9,13 +9,11 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRe
 
 final class GetCollectionsController
 {
-
     private $collectionRequest;
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->collectionRequest = new CollectionRequests();
     }
-
     public function handler()
     {
         return (new GetCollectionsUseCase($this->collectionRequest))->handler();

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -10,15 +10,12 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRe
 final class DeleteCollectionController
 {
     private $collectionRequests;
-
     public function __construct()
     {
         $this->collectionRequests = new CollectionRequests();
     }
-
     public function handler(string $uuid)
     {
         return (new DeleteCollectionUseCase($this->collectionRequests))->handler($uuid);
     }
-
 }

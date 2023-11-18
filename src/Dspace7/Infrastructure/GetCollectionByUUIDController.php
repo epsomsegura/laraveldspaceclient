@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -9,17 +9,13 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRe
 
 final class GetCollectionByUUIDController
 {
-
     private $collectionRequest;
-
     public function __construct()
     {
         $this->collectionRequest = new CollectionRequests();
     }
-
     public function handler(string $uuid)
     {
         return (new GetCollectionByUUIDUseCase($this->collectionRequest))->handler($uuid);
     }
-
 }

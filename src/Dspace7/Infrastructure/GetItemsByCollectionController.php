@@ -11,15 +11,13 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests
 
 final class GetItemsByCollectionController
 {
-
     private $collectionRequests;
     private $itemRequests;
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->itemRequests = new ItemRequests();
         $this->collectionRequests = new CollectionRequests();
     }
-
     public function handler(string $collectionName)
     {
         $collection = (new GetCollectionByNameUseCase($this->collectionRequests))->handler($collectionName);
