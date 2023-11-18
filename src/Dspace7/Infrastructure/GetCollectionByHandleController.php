@@ -6,22 +6,20 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByHandleUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
-use Illuminate\Http\Request;
 
 final class GetCollectionByHandleController
 {
 
     private $collectionRequest;
 
-    public function __construct(CollectionRequests $collectionRequest)
+    public function __construct()
     {
-        $this->collectionRequest = $collectionRequest;
+        $this->collectionRequest = new CollectionRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $handle)
     {
-        $collection = (new GetCollectionByHandleUseCase($this->collectionRequest))->handler($request->handle);
-        return $collection;
+        return (new GetCollectionByHandleUseCase($this->collectionRequest))->handler($handle);
     }
 
 }

@@ -23,9 +23,6 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemByNameControll
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemByUUIDController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemsByCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemsController;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityRequests;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateItemController;
@@ -37,28 +34,26 @@ use Illuminate\Support\Facades\Route;
 Route::group(["prefix" => "communities"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('handle')) {
-            $community = (new GetCommunityByHandleController(new CommunityRequests()))->handler($request);
-            return response()->json($community->toArray(), 200);
+            return response()->json(((new GetCommunityByHandleController)->handler($request->handle))->toArray(), 200);
         }
         if ($request->has('name')) {
-            $community = (new GetCommunityByNameController(new CommunityRequests()))->handler($request);
-            return response()->json($community->toArray(), 200);
+            return response()->json(((new GetCommunityByNameController)->handler($request->name))->toArray(), 200);
         }
         if ($request->has('isParent') && $request->isParent == TRUE) {
-            $communities = (new GetCommunitiesIsParentController(new CommunityRequests()))->handler($request);
+            $communities = (new GetCommunitiesIsParentController)->handler();
             foreach ($communities as $key => $community) {
                 $communities[$key] = $community->toArray();
             }
             return response()->json($communities, 200);
         }
-        if ($request->has('communityParentName') && $request->communityParentName == TRUE) {
-            $communities = (new GetCommunitiesWhereParentController(new CommunityRequests()))->handler($request);
+        if ($request->has('communityParentName')) {
+            $communities = (new GetCommunitiesWhereParentController)->handler($request->communityParentName);
             foreach ($communities as $key => $community) {
                 $communities[$key] = $community->toArray();
             }
             return response()->json($communities, 200);
         }
-        $communities = (new GetCommunitiesController(new CommunityRequests()))->handler($request);
+        $communities = (new GetCommunitiesController)->handler();
         foreach ($communities as $key => $community) {
             $communities[$key] = $community->toArray();
         }
@@ -66,27 +61,18 @@ Route::group(["prefix" => "communities"], function () {
     });
     Route::post("", function (Request $request) {
         if ($request->has('communityParentName')) {
-            $community = (new CreateCommunityWithParentController(new CommunityRequests()))->handler($request);
-            return response()->json($community->toArray(), 200);
+            return response()->json(((new CreateCommunityWithParentController)->handler($request->communityParentName,$request->community))->toArray(), 200);
         }
-        $community = (new CreateCommunityController(new CommunityRequests()))->handler($request);
-        return response()->json($community->toArray(), 200);
+        return response()->json(((new CreateCommunityController)->handler($request->community))->toArray(), 200);
     });
-    Route::get("{uuid}", function (Request $request, string $uuid) {
-        $community = (new GetCommunityByUUIDController(new CommunityRequests))->handler($request, $uuid);
-        return response()->json($community->toArray(), 200);
-    });
-    Route::get("{uuid}/subcommunities", function (Request $request, string $uuid) {
-        $community = (new GetCommunityByUUIDController(new CommunityRequests))->handler($request, $uuid);
-        return response()->json($community->toArray(), 200);
+    Route::get("{uuid}", function (string $uuid) {
+        return response()->json(((new GetCommunityByUUIDController)->handler($uuid))->toArray(), 200);
     });
     Route::put("{uuid}", function (Request $request, string $uuid) {
-        $community = (new UpdateCommunityController(new CommunityRequests))->handler($request, $uuid);
-        return response()->json($community->toArray(), 200);
+        return response()->json(((new UpdateCommunityController)->handler($request->community, $uuid))->toArray(), 200);
     });
-    Route::delete("{uuid}", function (Request $request, string $uuid) {
-        $response = (new DeleteCommunityController(new CommunityRequests))->handler($uuid);
-        return response()->json(["message" => $response], 200);
+    Route::delete("{uuid}", function (string $uuid) {
+        return response()->json(["message" => (new DeleteCommunityController)->handler($uuid)], 200);
     });
 });
 
@@ -97,41 +83,35 @@ Route::group(["prefix" => "communities"], function () {
 Route::group(["prefix" => "collections"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('communityName')) {
-            $collections = (new GetCollectionsByCommunityController(new CollectionRequests()))->handler($request);
+            $collections = (new GetCollectionsByCommunityController)->handler($request->communityName);
             foreach ($collections as $key => $collection) {
                 $collections[$key] = $collection->toArray();
             }
             return response()->json($collections, 200);
         }
         if ($request->has('handle')) {
-            $collection = (new GetCollectionByHandleController(new CollectionRequests()))->handler($request);
-            return response()->json($collection->toArray(), 200);
+            return response()->json(((new GetCollectionByHandleController)->handler($request->handle))->toArray(), 200);
         }
         if ($request->has('name')) {
-            $collection = (new GetCollectionByNameController(new CollectionRequests()))->handler($request);
-            return response()->json($collection->toArray(), 200);
+            return response()->json(((new GetCollectionByNameController)->handler($request->name))->toArray(), 200);
         }
-        $collections = (new GetCollectionsController(new CollectionRequests()))->handler($request);
+        $collections = (new GetCollectionsController)->handler();
         foreach ($collections as $key => $collection) {
             $collections[$key] = $collection->toArray();
         }
         return response()->json($collections, 200);
     });
     Route::get("{uuid}", function (Request $request, string $uuid) {
-        $collection = (new GetCollectionByUUIDController(new CollectionRequests))->handler($request, $uuid);
-        return response()->json($collection->toArray(), 200);
+        return response()->json(((new GetCollectionByUUIDController)->handler($uuid))->toArray(), 200);
     });
     Route::post("", function (Request $request) {
-        $collection = (new CreateCollectionController(new CollectionRequests(), new CommunityRequests()))->handler($request);
-        return response()->json($collection->toArray(), 200);
+        return response()->json(((new CreateCollectionController)->handler($request))->toArray(), 200);
     });
     Route::put("{uuid}", function (Request $request, string $uuid) {
-        $community = (new UpdateCollectionController(new CollectionRequests))->handler($request, $uuid);
-        return response()->json($community->toArray(), 200);
+        return response()->json(((new UpdateCollectionController)->handler($request->collection, $uuid))->toArray(), 200);
     });
-    Route::delete("{uuid}", function (Request $request, string $uuid) {
-        $response = (new DeleteCollectionController(new CollectionRequests))->handler($uuid);
-        return response()->json(["message" => $response], 200);
+    Route::delete("{uuid}", function (string $uuid) {
+        return response()->json(["message" => (new DeleteCollectionController)->handler($uuid)], 200);
     });
 });
 
@@ -142,40 +122,34 @@ Route::group(["prefix" => "collections"], function () {
 Route::group(["prefix" => "items"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('collectionName')) {
-            $items = (new GetItemsByCollectionController(new ItemRequests()))->handler($request);
+            $items = (new GetItemsByCollectionController)->handler($request->collectionName);
             foreach ($items as $key => $item) {
                 $items[$key] = $item->toArray();
             }
             return response()->json($items, 200);
         }
         if ($request->has('handle')) {
-            $item = (new GetItemByHandleController(new ItemRequests()))->handler($request);
-            return response()->json($item->toArray(), 200);
+            return response()->json(((new GetItemByHandleController)->handler($request->handle))->toArray(), 200);
         }
         if ($request->has('name')) {
-            $item = (new GetItemByNameController(new ItemRequests()))->handler($request);
-            return response()->json($item->toArray(), 200);
+            return response()->json(((new GetItemByNameController)->handler($request->name))->toArray(), 200);
         }
-        $items = (new GetItemsController(new ItemRequests()))->handler($request);
+        $items = (new GetItemsController)->handler();
         foreach ($items as $key => $item) {
             $items[$key] = $item->toArray();
         }
         return response()->json($items, 200);
     });
-    Route::get("{uuid}", function (Request $request, string $uuid) {
-        $item = (new GetItemByUUIDController(new ItemRequests))->handler($request, $uuid);
-        return response()->json($item->toArray(), 200);
+    Route::get("{uuid}", function (string $uuid) {
+        return response()->json(((new GetItemByUUIDController)->handler($uuid))->toArray(), 200);
     });
     Route::post("", function (Request $request) {
-        $item = (new CreateItemController(new CollectionRequests(), new ItemRequests()))->handler($request);
-        return response()->json($item->toArray(), 200);
+        return response()->json(((new CreateItemController)->handler($request->item,$request->collectionName))->toArray(), 200);
     });
     Route::put("{uuid}", function (Request $request, string $uuid) {
-        $item = (new UpdateItemController(new ItemRequests))->handler($request, $uuid);
-        return response()->json($item->toArray(), 200);
+        return response()->json(((new UpdateItemController)->handler($request->item, $uuid))->toArray(), 200);
     });
-    Route::delete("{uuid}", function (Request $request, string $uuid) {
-        $response = (new DeleteItemController(new ItemRequests))->handler($uuid);
-        return response()->json(["message" => $response], 200);
+    Route::delete("{uuid}", function (string $uuid) {
+        return response()->json(["message" => (new DeleteItemController)->handler($uuid)], 200);
     });
 });

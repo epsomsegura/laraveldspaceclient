@@ -5,29 +5,20 @@ declare(strict_types=1);
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\CreateCommunityUseCase;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Application\CreateItemUseCase;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByNameUseCase;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetItemByHandleUseCase;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityRequests;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
-use Illuminate\Http\Request;
 
 final class CreateCommunityController
 {
     private $communityRequest;
 
-    public function __construct(
-        CommunityRequests $communityRequest
-    )
+    public function __construct()
     {
-        $this->communityRequest = $communityRequest;
+        $this->communityRequest = new CommunityRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(array $community)
     {
-        $community = (new CreateCommunityUseCase($this->communityRequest))->handler($request->community);
-        return $community;
+        return (new CreateCommunityUseCase($this->communityRequest))->handler($community);
     }
 
 }

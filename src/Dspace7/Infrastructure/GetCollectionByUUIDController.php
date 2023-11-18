@@ -6,22 +6,20 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByUUIDUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
-use Illuminate\Http\Request;
 
 final class GetCollectionByUUIDController
 {
 
     private $collectionRequest;
 
-    public function __construct(CollectionRequests $collectionRequest)
+    public function __construct()
     {
-        $this->collectionRequest = $collectionRequest;
+        $this->collectionRequest = new CollectionRequests();
     }
 
-    public function handler(Request $request, string $uuid)
+    public function handler(string $uuid)
     {
-        $collection = (new GetCollectionByUUIDUseCase($this->collectionRequest))->handler($uuid);
-        return $collection;
+        return (new GetCollectionByUUIDUseCase($this->collectionRequest))->handler($uuid);
     }
 
 }

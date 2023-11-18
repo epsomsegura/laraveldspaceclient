@@ -7,25 +7,21 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCommunitiesWhereParentUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCommunityByNameUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityRequests;
-use Illuminate\Http\Request;
 
 final class GetCommunitiesWhereParentController
 {
 
     private $communityRequest;
 
-    public function __construct(
-        CommunityRequests $communityRequest
-        )
+    public function __construct()
     {
-        $this->communityRequest = $communityRequest;
+        $this->communityRequest = new CommunityRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $communityParentName)
     {
-        $communityParent = (new GetCommunityByNameUseCase($this->communityRequest))->handler($request->communityParentName);
-        $communities = (new GetCommunitiesWhereParentUseCase($this->communityRequest))->handler($communityParent->uuid());
-        return $communities;
+        $communityParent = (new GetCommunityByNameUseCase($this->communityRequest))->handler($communityParentName);
+        return (new GetCommunitiesWhereParentUseCase($this->communityRequest))->handler($communityParent->uuid());
     }
 
 }

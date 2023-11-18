@@ -6,22 +6,20 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetItemByUUIDUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
-use Illuminate\Http\Request;
 
 final class GetItemByUUIDController
 {
 
     private $itemRequests;
 
-    public function __construct(ItemRequests $itemRequests)
+    public function __construct()
     {
-        $this->itemRequests = $itemRequests;
+        $this->itemRequests = new ItemRequests();
     }
 
-    public function handler(Request $request, string $uuid)
+    public function handler(string $uuid)
     {
-        $item = (new GetItemByUUIDUseCase($this->itemRequests))->handler($uuid);
-        return $item;
+        return (new GetItemByUUIDUseCase($this->itemRequests))->handler($uuid);
     }
 
 }

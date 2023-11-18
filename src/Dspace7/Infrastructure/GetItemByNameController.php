@@ -6,22 +6,20 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetItemByNameUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
-use Illuminate\Http\Request;
 
 final class GetItemByNameController
 {
 
     private $itemRequests;
 
-    public function __construct(ItemRequests $itemRequests)
+    public function __construct()
     {
-        $this->itemRequests = $itemRequests;
+        $this->itemRequests = new ItemRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $name)
     {
-        $item = (new GetItemByNameUseCase($this->itemRequests))->handler($request->name);
-        return $item;
+        return (new GetItemByNameUseCase($this->itemRequests))->handler($name);
     }
 
 }

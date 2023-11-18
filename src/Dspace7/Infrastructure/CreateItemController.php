@@ -6,7 +6,6 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\CreateItemUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByNameUseCase;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetItemByHandleUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
 use Illuminate\Http\Request;
@@ -17,19 +16,15 @@ final class CreateItemController
     private $collectionRequests;
     private $itemRequests;
 
-    public function __construct(
-        CollectionRequests $collectionRequests,
-        ItemRequests $itemRequests
-    )
+    public function __construct()
     {
-        $this->collectionRequests = $collectionRequests;
-        $this->itemRequests = $itemRequests;
+        $this->collectionRequests = new CollectionRequests();
+        $this->itemRequests = new ItemRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(array $item, string $collectionName)
     {
-        $collection = (new GetCollectionByNameUseCase($this->collectionRequests))->handler($request->collectionName);
-        $item = (new CreateItemUseCase($this->itemRequests))->handler($request->item, $collection->uuid());
-        return $item;
+        $collection = (new GetCollectionByNameUseCase($this->collectionRequests))->handler($collectionName);
+        return (new CreateItemUseCase($this->itemRequests))->handler($item, $collection->uuid());
     }
 }

@@ -12,19 +12,15 @@ use Illuminate\Http\Request;
 final class CreateCommunityWithParentController
 {
     private $communityRequest;
-
-    public function __construct(
-        CommunityRequests $communityRequest
-    )
+    public function __construct()
     {
-        $this->communityRequest = $communityRequest;
+        $this->communityRequest = new CommunityRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $communityParentName, array $community)
     {
-        $communityParent = (new GetCommunityByNameUseCase($this->communityRequest))->handler($request->communityParentName);
-        $community = (new CreateCommunityWithParentUseCase($this->communityRequest))->handler($request->community, $communityParent->uuid());
-        return $community;
+        $communityParent = (new GetCommunityByNameUseCase($this->communityRequest))->handler($communityParentName);
+        return (new CreateCommunityWithParentUseCase($this->communityRequest))->handler($community, $communityParent->uuid());
     }
 
 }

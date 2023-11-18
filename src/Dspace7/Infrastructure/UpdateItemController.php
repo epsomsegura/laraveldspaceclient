@@ -6,23 +6,19 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\UpdateItemUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\ItemRequests;
-use Illuminate\Http\Request;
 
 final class UpdateItemController
 {
     private $itemRequests;
 
-    public function __construct(
-        ItemRequests $itemRequests
-    )
+    public function __construct()
     {
-        $this->itemRequests = $itemRequests;
+        $this->itemRequests = new ItemRequests();
     }
 
-    public function handler(Request $request, string $uuid)
+    public function handler(array $item, string $uuid)
     {
-        $item = (new UpdateItemUseCase($this->itemRequests))->handler($request->item, $uuid);
-        return $item;
+        return (new UpdateItemUseCase($this->itemRequests))->handler($item, $uuid);
     }
 
 }

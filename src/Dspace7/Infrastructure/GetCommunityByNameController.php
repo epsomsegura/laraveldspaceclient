@@ -6,20 +6,18 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCommunityByNameUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityRequests;
-use Illuminate\Http\Request;
 
 final class GetCommunityByNameController
 {
     private $communityRequest;
 
-    public function __construct(CommunityRequests $communityRequest)
+    public function __construct()
     {
-        $this->communityRequest = $communityRequest;
+        $this->communityRequest = new CommunityRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $name)
     {
-        $community = (new GetCommunityByNameUseCase($this->communityRequest))->handler($request->name);
-        return $community;
+        return (new GetCommunityByNameUseCase($this->communityRequest))->handler($name);
     }
 }

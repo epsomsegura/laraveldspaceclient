@@ -15,20 +15,16 @@ final class CreateCollectionController
     private $collectionRequests;
     private $communityRequests;
 
-    public function __construct(
-        CollectionRequests $collectionRequests,
-        CommunityRequests $communityRequests
-    )
+    public function __construct()
     {
-        $this->collectionRequests = $collectionRequests;
-        $this->communityRequests = $communityRequests;
+        $this->collectionRequests = new CollectionRequests();
+        $this->communityRequests = new CommunityRequests();
     }
 
     public function handler(Request $request)
     {
         $community = (new GetCommunityByNameUseCase($this->communityRequests))->handler($request->communityName);
-        $collection = (new CreateCollectionUseCase($this->collectionRequests))->handler($request->collection, $community->uuid());
-        return $collection;
+        return (new CreateCollectionUseCase($this->collectionRequests))->handler($request->collection, $community->uuid());
     }
 
 }

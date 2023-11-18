@@ -6,22 +6,20 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCollectionByNameUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CollectionRequests;
-use Illuminate\Http\Request;
 
 final class GetCollectionByNameController
 {
 
     private $collectionRequest;
 
-    public function __construct(CollectionRequests $collectionRequest)
+    public function __construct()
     {
-        $this->collectionRequest = $collectionRequest;
+        $this->collectionRequest = new CollectionRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $name)
     {
-        $collection = (new GetCollectionByNameUseCase($this->collectionRequest))->handler($request->name);
-        return $collection;
+        return (new GetCollectionByNameUseCase($this->collectionRequest))->handler($name);
     }
 
 }

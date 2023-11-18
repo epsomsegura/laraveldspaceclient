@@ -11,17 +11,14 @@ final class DeleteItemController
 {
     private $itemRequests;
 
-    public function __construct(
-        ItemRequests $itemRequests
-    )
+    public function __construct()
     {
-        $this->itemRequests = $itemRequests;
+        $this->itemRequests = new ItemRequests();
     }
 
     public function handler(string $uuid)
     {
-        $item = (new DeleteItemUseCase($this->itemRequests))->handler($uuid);
-        return $item;
+        return (new DeleteItemUseCase($this->itemRequests))->handler($uuid);
     }
 
 }

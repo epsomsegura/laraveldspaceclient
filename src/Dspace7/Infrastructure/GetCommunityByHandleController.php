@@ -6,20 +6,18 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Application\GetCommunityByHandleUseCase;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\Requests\CommunityRequests;
-use Illuminate\Http\Request;
 
 final class GetCommunityByHandleController
 {
     private $communityRequest;
 
-    public function __construct(CommunityRequests $communityRequest)
+    public function __construct()
     {
-        $this->communityRequest = $communityRequest;
+        $this->communityRequest = new CommunityRequests();
     }
 
-    public function handler(Request $request)
+    public function handler(string $handle)
     {
-        $community = (new GetCommunityByHandleUseCase($this->communityRequest))->handler($request->handle);
-        return $community;
+        return (new GetCommunityByHandleUseCase($this->communityRequest))->handler($handle);
     }
 }
