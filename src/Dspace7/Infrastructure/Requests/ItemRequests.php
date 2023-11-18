@@ -10,8 +10,6 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Item;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Metadata;
 use Epsomsegura\Laraveldspaceclient\Shared\Infrastructure\GuzzleRequester;
 
-use function PHPUnit\Framework\objectHasAttribute;
-
 final class ItemRequests implements ItemContract
 {
     private $requester;

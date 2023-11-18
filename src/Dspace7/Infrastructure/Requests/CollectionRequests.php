@@ -42,9 +42,6 @@ final class CollectionRequests implements CollectionContract
         if (!array_key_exists('_embedded', get_object_vars($collections))) {
             throw CollectionExceptions::notFound();
         }
-        if (sizeof($collections->_embedded->collections) <= 0) {
-            throw CollectionExceptions::empty();
-        }
         return $this->getCollections($collections->_embedded->collections);
     }
     public function findAllByCommunityUUID(string $communityUUID) : array
@@ -52,9 +49,6 @@ final class CollectionRequests implements CollectionContract
         $collections = $this->requester->setMethod('get')->setEndpoint('core/communities/'.$communityUUID.'/collections')->request();
         if (!array_key_exists('_embedded', get_object_vars($collections))) {
             throw CollectionExceptions::notFound();
-        }
-        if (sizeof($collections->_embedded->collections) <= 0) {
-            throw CollectionExceptions::empty();
         }
         return $this->getCollections($collections->_embedded->collections);
     }
