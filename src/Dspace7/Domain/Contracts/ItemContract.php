@@ -13,6 +13,6 @@ interface ItemContract
     public function findAllByCollectionUUID(string $collectionUUID) : array;
     public function findOneByHandle(string $handle) : ?Item;
     public function findOneByName(string $name) : ?Item;
-    public function findOneByUUID(string $uuid) : Item;
+    public function findOneByUUID(string $uuid) : ?Item;
     public function update($item, string $uuid) : ?Item;
 }

@@ -9,15 +9,12 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\CommunityContract;
 final class GetCommunitiesWhereParentUseCase
 {
     private $communityContract;
-
     public function __construct(
         CommunityContract $communityContract
-    )
-    {
+    ) {
         $this->communityContract = $communityContract;
     }
-
-    public function handler(string $communityParentUUID)
+    public function handler(string $communityParentUUID): array
     {
         return $this->communityContract->findAllWhereParent($communityParentUUID);
     }

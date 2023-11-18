@@ -13,8 +13,8 @@ interface CommunityContract
     public function findAll() : array;
     public function findAllIsParent() : array;
     public function findAllWhereParent(string $communityParentUUID) : array;
-    public function findOneByUUID(string $uuid) : Community;
-    public function findOneByHandle(string $handle) : Community;
-    public function findOneByName(string $name) : Community;
+    public function findOneByUUID(string $uuid) : ?Community;
+    public function findOneByHandle(string $handle) : ?Community;
+    public function findOneByName(string $name) : ?Community;
     public function update($community, string $uuid) : ?Community;
 }

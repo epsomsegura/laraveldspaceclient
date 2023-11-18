@@ -16,7 +16,6 @@ class GuzzleRequester
     private $method;
     private $options;
     private $query;
-
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client([
@@ -27,47 +26,38 @@ class GuzzleRequester
         ]);
         $this->getBearerToken();
     }
-
     public function bearerToken()
     {
         return $this->bearerToken;
     }
-    
     public function body()
     {
         return $this->body;
     }
-    
     public function dspaceCookie()
     {
         return $this->dspaceCookie;
     }
-    
     public function dspaceToken()
     {
         return $this->dspaceToken;
     }
-    
     public function headers()
     {
         return $this->headers;
     }
-    
     public function method()
     {
         return $this->method;
     }
-    
     public function options()
     {
         return $this->options;
     }
-    
     public function query()
     {
         return $this->query;
     }
-
     public function request()
     {
         $response = null;
@@ -91,25 +81,21 @@ class GuzzleRequester
         }
         return $response;
     }
-
     public function setBody($body)
     {
         $this->body = $body;
         return $this;
     }
-
     public function setCookie(CookieJar $cookie)
     {
         $this->dspaceCookie = $cookie;
         return $this;
     }
-
     public function setEndpoint(string $endpoint)
     {
         $this->endpoint = $endpoint;
         return $this;
     }
-
     public function setHeaders(?array $headers)
     {
         $this->headers = [
@@ -127,47 +113,39 @@ class GuzzleRequester
         }
         return $this;
     }
-
     public function setMethod(string $method)
     {
         $this->method = $method;
         return $this;
     }
-
     public function setQuery(?array $query)
     {
         $this->query = $query;
         return $this;
     }
-
     protected function getBearerToken()
     {
         $this->setDspaceToken();
         $this->setDspaceCookie();
         $this->setQuery(['user' => getenv('DSPACE_API_EMAIL'), 'password' => getenv('DSPACE_API_PASS')]);
         $this->setHeaders(null);
-
         $options = [
             'headers' => $this->headers,
             'cookies' => $this->dspaceCookie,
             'query' => $this->query
         ];
         $this->bearerToken = $this->client->post("authn/login", $options)->getHeaders()['Authorization'][0];
-
         $this->setQuery(null);
         $this->setHeaders(null);
     }
-
     protected function setDspaceCookie()
     {
         $this->dspaceCookie = CookieJar::fromArray(['DSPACE-XSRF-COOKIE' => $this->dspaceToken], getenv('DSPACE_API_DOMAIN'));
     }
-
     protected function setDspaceToken()
     {
         $this->dspaceToken = $this->client->get("")->getHeaders()['DSPACE-XSRF-TOKEN'][0];
     }
-
     protected function setRequestOptions()
     {
         if ($this->headers) {
@@ -179,7 +157,7 @@ class GuzzleRequester
         if ($this->query) {
             $this->options['query'] = $this->query;
         }
-        if($this->body){
+        if ($this->body) {
             $this->options['body'] = $this->body;
         }
     }

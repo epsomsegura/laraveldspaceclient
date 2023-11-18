@@ -4,13 +4,11 @@ namespace Epsomsegura\Laraveldspaceclient\Dspace7\Domain;
 
 class Community
 {
-
     private ?string $_id;
     private ?string $_uuid;
     private string $_name;
     private ?string $_handle;
     private $_metadata;
-
     public function __construct(
         string $id,
         string $uuid,
@@ -24,7 +22,6 @@ class Community
         $this->_handle = $handle;
         $this->_metadata = $metadata ?? [];
     }
-
     public function id(): string
     {
         return $this->_id;
@@ -45,12 +42,10 @@ class Community
     {
         return $this->_metadata;
     }
-
     public function toCollection()
     {
         return collect($this);
     }
-
     public function toArray()
     {
         return [

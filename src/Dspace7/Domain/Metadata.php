@@ -11,8 +11,6 @@ class Metadata
     private ?string $_authority;
     private ?int $_confidence;
     private ?int $_place;
-
-
     public function __construct(
         string $value,
         ?string $language,
@@ -26,7 +24,6 @@ class Metadata
         $this->_confidence = $confidence;
         $this->_place = $place;
     }
-
     public function value(): string
     {
         return $this->_value;
@@ -47,8 +44,7 @@ class Metadata
     {
         return $this->_place;
     }
-
-    public static function metadataArrayToArray(array $metadata) : array
+    public static function metadataArrayToArray(array $metadata): array
     {
         $metadataArray = [];
         foreach ($metadata as $key => $metadataElements) {
@@ -65,7 +61,6 @@ class Metadata
         }
         return $metadataArray;
     }
-
     public static function arrayToMetadataArray(array $metadata): array
     {
         $metadataArray = [];
@@ -83,12 +78,10 @@ class Metadata
         }
         return $metadataArray;
     }
-
     public function toCollection()
     {
         return collect($this);
     }
-
     public function toArray()
     {
         return [

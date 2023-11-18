@@ -10,16 +10,13 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Item;
 final class CreateItemUseCase
 {
     private $itemContract;
-
     public function __construct(
         ItemContract $itemContract
-    )
-    {
+    ) {
         $this->itemContract = $itemContract;
     }
-
-    public function handler($item,string $collectionUUID): Item
+    public function handler($item, string $collectionUUID): ?Item
     {
-        return $this->itemContract->create($item,$collectionUUID);
+        return $this->itemContract->create($item, $collectionUUID);
     }
 }

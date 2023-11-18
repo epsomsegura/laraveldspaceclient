@@ -15,7 +15,6 @@ class Item
     private ?bool $_discoverable;
     private ?bool $_withdraw;
     private string $_type;
-
     public function __construct(
         ?string $id,
         ?string $uuid,
@@ -37,7 +36,6 @@ class Item
         $this->_withdraw = $withdraw;
         $this->_type = $type;
     }
-
     public function id(): ?string
     {
         return $this->_id;
@@ -74,12 +72,10 @@ class Item
     {
         return $this->_type;
     }
-
     public function toCollection()
     {
         return collect($this);
     }
-
     public function toArray()
     {
         return [

@@ -10,15 +10,12 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\ItemContract;
 final class GetItemsUseCase
 {
     private $itemContract;
-
     public function __construct(
         ItemContract $itemContract
-    )
-    {
+    ) {
         $this->itemContract = $itemContract;
     }
-
-    public function handler()
+    public function handler(): array
     {
         return $this->itemContract->findAll();
     }

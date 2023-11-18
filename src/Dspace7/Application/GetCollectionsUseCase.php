@@ -9,15 +9,12 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\CollectionContract;
 final class GetCollectionsUseCase
 {
     private $collectionContract;
-
     public function __construct(
         CollectionContract $collectionContract
-    )
-    {
+    ) {
         $this->collectionContract = $collectionContract;
     }
-
-    public function handler()
+    public function handler(): array
     {
         return $this->collectionContract->findAll();
     }

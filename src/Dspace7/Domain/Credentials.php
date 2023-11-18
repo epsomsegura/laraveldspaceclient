@@ -14,14 +14,12 @@ class Credentials
     private ?string $domain;
     private EmailValidator $emailValidator;
     private UrlValidator $urlValidator;
-
     public function __construct(
         ?string $email = null,
         ?string $pass = null,
         ?string $url = null,
         ?string $domain = null
-        )
-    {
+    ) {
         $this->email = $email;
         $this->pass = $pass;
         $this->url = $url;
@@ -32,43 +30,34 @@ class Credentials
 
         $this->errorHandler();
     }
-
     public function email(): ?string
     {
         return $this->email;
     }
-    
     public function pass(): ?string
     {
         return $this->pass;
     }
-    
     public function url(): ?string
     {
         return $this->url;
     }
-    
     public function domain(): ?string
     {
         return $this->domain;
     }
-    
-
     protected function errorHandler()
     {
         if (empty($this->email) && empty($this->pass) && empty($this->url)) {
             throw BadCredentialsException::emptyCredentials();
         }
-
         if (!empty($this->validationsMessage())) {
             throw BadCredentialsException::invalidData(implode(" - ", $this->validationsMessage()));
         }
-
         if (!$this->urlValidator->urlExists()) {
             throw BadCredentialsException::urlNotWorking($this->url);
         }
     }
-
     protected function validationsMessage(): array
     {
         $validationsMessage = [];
