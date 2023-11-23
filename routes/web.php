@@ -1,12 +1,15 @@
 <?php
 
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBundleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityWithParentController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateItemController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteBundleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteItemController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetBundlesByItemController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByHandleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByNameController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByUUIDController;
@@ -151,5 +154,31 @@ Route::group(["prefix" => "items"], function () {
     });
     Route::delete("{uuid}", function (string $uuid) {
         return response()->json(["message" => (new DeleteItemController)->handler($uuid)], 200);
+    });
+});
+
+
+
+
+
+Route::group(["prefix" => "bundles"], function () {
+    Route::get("", function (Request $request) {
+        if ($request->has('itemHandle')) {
+            $bundles = (new GetBundlesByItemController())->handler($request->itemHandle);
+            foreach ($bundles as $key => $bundle) {
+                $bundles[$key] = $bundle->toArray();
+            }
+            return response()->json($bundles, 200);
+        }
+        return response()->json(["message"=>"Get all bundles is unsupported, add itemHandle param to request."],200);
+    });
+    Route::get("{uuid}", function (string $uuid) {
+        return response()->json(((new GetItemByUUIDController)->handler($uuid))->toArray(), 200);
+    });
+    Route::post("", function (Request $request) {
+        return response()->json(((new CreateBundleController)->handler($request->bundle,$request->itemHandle))->toArray(), 200);
+    });
+    Route::delete("{uuid}", function (string $uuid) {
+        return response()->json(["message" => (new DeleteBundleController)->handler($uuid)], 200);
     });
 });

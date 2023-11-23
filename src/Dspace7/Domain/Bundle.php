@@ -2,16 +2,15 @@
 
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Domain;
 
-class Item
+use Maatwebsite\Excel\Concerns\ToArray;
+
+class Bundle
 {
     private ?string $_id;
     private ?string $_uuid;
     private string $_name;
     private ?string $_handle;
     private array $_metadata;
-    private ?bool $_inArchive;
-    private ?bool $_discoverable;
-    private ?bool $_withdraw;
     private string $_type;
     public function __construct(
         ?string $id,
@@ -19,9 +18,6 @@ class Item
         string $name,
         ?string $handle,
         array $metadata,
-        ?bool $inArchive,
-        ?bool $discoverable,
-        ?bool $withdraw,
         string $type
     ) {
         $this->_id = $id;
@@ -29,9 +25,6 @@ class Item
         $this->_name = $name;
         $this->_handle = $handle;
         $this->_metadata = $metadata ?? [];
-        $this->_inArchive = $inArchive;
-        $this->_discoverable = $discoverable;
-        $this->_withdraw = $withdraw;
         $this->_type = $type;
     }
     public function id(): ?string
@@ -54,18 +47,6 @@ class Item
     {
         return $this->_metadata;
     }
-    public function inArchive(): ?bool
-    {
-        return $this->_inArchive;
-    }
-    public function discoverable(): ?bool
-    {
-        return $this->_discoverable;
-    }
-    public function withdraw(): ?bool
-    {
-        return $this->_withdraw;
-    }
     public function type(): string
     {
         return $this->_type;
@@ -82,9 +63,6 @@ class Item
             "name" => $this->_name,
             "handle" => $this->_handle,
             "metadata" => Metadata::metadataArrayToArray($this->_metadata),
-            "inArchive" => $this->_inArchive,
-            "discoverable" => $this->_discoverable,
-            "withdraw" => $this->_withdraw,
             "type" => $this->_type,
         ];
     }
