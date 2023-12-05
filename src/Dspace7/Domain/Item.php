@@ -11,7 +11,7 @@ class Item
     private array $_metadata;
     private ?bool $_inArchive;
     private ?bool $_discoverable;
-    private ?bool $_withdraw;
+    private ?bool $_withdrawn;
     private string $_type;
     public function __construct(
         ?string $id,
@@ -21,7 +21,7 @@ class Item
         array $metadata,
         ?bool $inArchive,
         ?bool $discoverable,
-        ?bool $withdraw,
+        ?bool $withdrawn,
         string $type
     ) {
         $this->_id = $id;
@@ -31,7 +31,7 @@ class Item
         $this->_metadata = $metadata ?? [];
         $this->_inArchive = $inArchive;
         $this->_discoverable = $discoverable;
-        $this->_withdraw = $withdraw;
+        $this->_withdrawn = $withdrawn;
         $this->_type = $type;
     }
     public function id(): ?string
@@ -62,9 +62,9 @@ class Item
     {
         return $this->_discoverable;
     }
-    public function withdraw(): ?bool
+    public function withdrawn(): ?bool
     {
-        return $this->_withdraw;
+        return $this->_withdrawn;
     }
     public function type(): string
     {
@@ -84,7 +84,7 @@ class Item
             "metadata" => Metadata::metadataArrayToArray($this->_metadata),
             "inArchive" => $this->_inArchive,
             "discoverable" => $this->_discoverable,
-            "withdraw" => $this->_withdraw,
+            "withdrawn" => $this->_withdrawn,
             "type" => $this->_type,
         ];
     }

@@ -21,7 +21,7 @@ final class ItemRequests implements ItemContract
 
     public function create($item, string $collectionUUID): ?Item
     {
-        $item = $this->requester->setMethod('post')->setEndpoint('core/items')->setQuery(["owningCollection" => $collectionUUID])->setBody(json_encode($item))->setHeaders(['Content-Type' => 'application/json'])->request();
+        $item = $this->requester->setMethod('post')->setEndpoint('core/items')->setQuery(["owningCollection" => $collectionUUID])->setBody(json_encode($item))->setHeaders(['Content-Type' => 'application/json','Accept'=>'application/json'])->request();
         return new Item(
             $item->id,
             $item->uuid,
