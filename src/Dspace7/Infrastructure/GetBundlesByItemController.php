@@ -18,9 +18,9 @@ final class GetBundlesByItemController
         $this->bundleRequests = new BundleRequests();
         $this->itemRequests = new ItemRequests();
     }
-    public function handler(string $itemHandle)
+    public function handler(string $itemHandle, ?int $page)
     {
         $item = (new GetItemByHandleUseCase($this->itemRequests))->handler($itemHandle);
-        return (new GetBundlesByItemUseCase($this->bundleRequests))->handler($item->uuid());
+        return (new GetBundlesByItemUseCase($this->bundleRequests))->handler($item->uuid(),($page ?? 0)); 
     }
 }

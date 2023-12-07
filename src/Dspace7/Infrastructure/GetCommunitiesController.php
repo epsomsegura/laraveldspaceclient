@@ -14,8 +14,8 @@ final class GetCommunitiesController
     {
         $this->communityRequest = new CommunityRequests();
     }
-    public function handler()
+    public function handler(?int $page)
     {
-        return (new GetCommunitiesUseCase($this->communityRequest))->handler();
+        return (new GetCommunitiesUseCase($this->communityRequest))->handler(($page ?? 0));
     }
 }

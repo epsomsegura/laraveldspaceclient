@@ -15,8 +15,8 @@ final class GetItemsUseCase
     ) {
         $this->itemContract = $itemContract;
     }
-    public function handler(): array
+    public function handler(int $page): array
     {
-        return $this->itemContract->findAll();
+        return $this->itemContract->findAll($page);
     }
 }

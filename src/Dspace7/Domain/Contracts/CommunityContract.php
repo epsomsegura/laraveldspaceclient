@@ -10,9 +10,9 @@ interface CommunityContract
     public function create($community) : ?Community;
     public function createWithParent($community,string $communityParentUUID) : ?Community;
     public function delete($uuid) : string;
-    public function findAll() : array;
-    public function findAllIsParent() : array;
-    public function findAllWhereParent(string $communityParentUUID) : array;
+    public function findAll(int $page) : array;
+    public function findAllIsParent(int $page) : array;
+    public function findAllWhereParent(string $communityParentUUID,int $page) : array;
     public function findOneByUUID(string $uuid) : ?Community;
     public function findOneByHandle(string $handle) : ?Community;
     public function findOneByName(string $name) : ?Community;

@@ -14,8 +14,8 @@ final class GetCommunitiesUseCase
     ) {
         $this->communityContract = $communityContract;
     }
-    public function handler(): array
+    public function handler(int $page): array
     {
-        return $this->communityContract->findAll();
+        return $this->communityContract->findAll($page);
     }
 }

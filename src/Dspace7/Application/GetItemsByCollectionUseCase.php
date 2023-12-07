@@ -15,8 +15,8 @@ final class GetItemsByCollectionUseCase
     ) {
         $this->itemContract = $itemContract;
     }
-    public function handler(string $collectionUUID): array
+    public function handler(string $collectionUUID, int $page): array
     {
-        return $this->itemContract->findAllByCollectionUUID($collectionUUID);
+        return $this->itemContract->findAllByCollectionUUID($collectionUUID, $page);
     }
 }

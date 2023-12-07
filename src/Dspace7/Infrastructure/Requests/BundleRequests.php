@@ -37,16 +37,16 @@ final class BundleRequests implements BundleContract
         $this->requester->setMethod('delete')->setEndpoint('core/bundles/' . $uuid)->setHeaders(['Content-Type' => 'application/json'])->request();
         return "success";
     }
-    public function findAllByItemUUID(string $itemUUID) : array
+    public function findAllByItemUUID(string $itemUUID, int $page) : array
     {
-        $bundles = $this->requester->setMethod('get')->setEndpoint('core/items/'.$itemUUID.'/bundles')->request();
+        $bundles = $this->requester->setMethod('get')->setEndpoint('core/items/'.$itemUUID.'/bundles')->setQuery(["page" => $page])->request();
         if (!array_key_exists('_embedded', get_object_vars($bundles))) {
             throw BundleExceptions::notFound();
         }
         $bundles = array_filter($bundles->_embedded->bundles, function($bundle){
             return ($bundle->type === "bundle");
         });
-        return $this->getBundles($bundles);
+        return ["elements" => $bundles->_embedded->bundles, "page" => $bundles->page];
     }
     public function findOneByUUID(string $uuid): ?Bundle
     {

@@ -14,8 +14,8 @@ final class GetCommunitiesIsParentController
     {
         $this->communityRequest = new CommunityRequests();
     }
-    public function handler()
+    public function handler(?int $page)
     {
-        return (new GetCommunitiesIsParentUseCase($this->communityRequest))->handler();
+        return (new GetCommunitiesIsParentUseCase($this->communityRequest))->handler(($page ?? 0));
     }
 }

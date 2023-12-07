@@ -14,8 +14,8 @@ final class GetCommunitiesIsParentUseCase
     ) {
         $this->communityContract = $communityContract;
     }
-    public function handler(): array
+    public function handler(int $page): array
     {
-        return $this->communityContract->findAllIsParent();
+        return $this->communityContract->findAllIsParent($page);
     }
 }

@@ -47,29 +47,29 @@ final class CommunityRequests implements CommunityContract
         return "success";
     }
 
-    public function findAll(): array
+    public function findAll(int $page): array
     {
-        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities')->request();
+        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities')->setQuery(["page" => $page])->request();
         if (!array_key_exists('_embedded', get_object_vars($communities))) {
             throw CommunityExceptions::notFound();
         }
-        return $this->getCommunities($communities->_embedded->communities);
+        return ["elements" => $communities->_embedded->communities,"page"=>$communities->page];
     }
-    public function findAllIsParent(): array
+    public function findAllIsParent(int $page): array
     {
-        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities/search/top')->request();
+        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities/search/top')->setQuery(["page" => $page])->request();
         if (!array_key_exists('_embedded', get_object_vars($communities))) {
             throw CommunityExceptions::notFound();
         }
-        return $this->getCommunities($communities->_embedded->communities);
+        return ["elements" => $communities->_embedded->communities,"page"=>$communities->page];
     }
-    public function findAllWhereParent(string $communityParentUUID): array
+    public function findAllWhereParent(string $communityParentUUID,int $page): array
     {
-        $subcommunities = $this->requester->setMethod('get')->setEndpoint('core/communities/'.$communityParentUUID.'/subcommunities')->request();
+        $subcommunities = $this->requester->setMethod('get')->setEndpoint('core/communities/'.$communityParentUUID.'/subcommunities')->setQuery(["page" => $page])->request();
         if (!array_key_exists('_embedded', get_object_vars($subcommunities))) {
             throw CommunityExceptions::notFound();
         }
-        return $this->getCommunities($subcommunities->_embedded->subcommunities);
+        return ["elements" => $subcommunities->_embedded->subcommunities, "page"=>$subcommunities->page];
     }
     public function findOneByUUID(string $uuid): Community
     {

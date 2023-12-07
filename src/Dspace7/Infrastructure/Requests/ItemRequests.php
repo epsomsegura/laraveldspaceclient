@@ -39,17 +39,17 @@ final class ItemRequests implements ItemContract
         $this->requester->setMethod('delete')->setEndpoint('core/items/' . $uuid)->setHeaders(['Content-Type' => 'application/json'])->request();
         return "success";
     }
-    public function findAll(): array
+    public function findAll(int $page): array
     {
-        $items = $this->requester->setMethod('get')->setEndpoint('core/items')->request();
+        $items = $this->requester->setMethod('get')->setEndpoint('core/items')->setQuery(["page"=>$page])->request();
         if (!array_key_exists('_embedded', get_object_vars($items))) {
             throw ItemExceptions::notFound();
         }
-        return $this->getItems($items->_embedded->items);
+        return ["result" => $items->_embedded->items,"page" => $items->page];
     }
-    public function findAllByCollectionUUID(string $collectionUUID) : array
+    public function findAllByCollectionUUID(string $collectionUUID, int $page) : array
     {
-        $items = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["scope"=>$collectionUUID])->request();
+        $items = $this->requester->setMethod('get')->setEndpoint('discover/search/objects')->setQuery(["scope"=>$collectionUUID,"page"=>$page])->request();
         if (!array_key_exists('_embedded', get_object_vars($items))) {
             throw ItemExceptions::notFound();
         }

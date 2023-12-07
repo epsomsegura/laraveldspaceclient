@@ -16,8 +16,8 @@ final class GetBundlesByItemUseCase
     ) {
         $this->bundleContract = $bundleContract;
     }
-    public function handler(string $itemUUID): array
+    public function handler(string $itemUUID, int $page): array
     {
-        return $this->bundleContract->findAllByItemUUID($itemUUID);
+        return $this->bundleContract->findAllByItemUUID($itemUUID, $page);
     }
 }

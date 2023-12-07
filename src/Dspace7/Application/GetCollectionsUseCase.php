@@ -14,8 +14,8 @@ final class GetCollectionsUseCase
     ) {
         $this->collectionContract = $collectionContract;
     }
-    public function handler(): array
+    public function handler(int $page): array
     {
-        return $this->collectionContract->findAll();
+        return $this->collectionContract->findAll($page);
     }
 }

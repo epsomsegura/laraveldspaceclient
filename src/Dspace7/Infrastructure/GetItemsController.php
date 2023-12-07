@@ -14,8 +14,8 @@ final class GetItemsController
     {
         $this->itemsRequest = new ItemRequests();
     }
-    public function handler()
+    public function handler(?int $page)
     {
-        return (new GetItemsUseCase($this->itemsRequest))->handler();
+        return (new GetItemsUseCase($this->itemsRequest))->handler(($page ?? 0));
     }
 }

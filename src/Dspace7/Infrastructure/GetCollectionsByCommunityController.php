@@ -18,9 +18,9 @@ final class GetCollectionsByCommunityController
         $this->collectionRequest = new CollectionRequests();
         $this->communityRequests = new CommunityRequests();
     }
-    public function handler(string $communityName)
+    public function handler(string $communityName, ?int $page)
     {
         $community = (new GetCommunityByNameUseCase($this->communityRequests))->handler($communityName);
-        return (new GetCollectionsByCommunityUseCase($this->collectionRequest))->handler($community->uuid());
+        return (new GetCollectionsByCommunityUseCase($this->collectionRequest))->handler($community->uuid(),($page ?? 0));
     }
 }

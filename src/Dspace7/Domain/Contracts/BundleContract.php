@@ -9,6 +9,6 @@ interface BundleContract
 {
     public function create($bundle, string $itemUUID) : ?Bundle;
     public function delete(string $uuid) : string;
-    public function findAllByItemUUID(string $itemUUID) : array;
+    public function findAllByItemUUID(string $itemUUID, int $page) : array;
     public function findOneByUUID(string $uuid) : ?Bundle;
 }

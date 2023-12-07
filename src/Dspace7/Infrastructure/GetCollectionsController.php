@@ -14,8 +14,8 @@ final class GetCollectionsController
     {
         $this->collectionRequest = new CollectionRequests();
     }
-    public function handler()
+    public function handler(?int $page)
     {
-        return (new GetCollectionsUseCase($this->collectionRequest))->handler();
+        return (new GetCollectionsUseCase($this->collectionRequest))->handler(($page ?? 0));
     }
 }

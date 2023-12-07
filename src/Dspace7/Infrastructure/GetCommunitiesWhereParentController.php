@@ -15,9 +15,9 @@ final class GetCommunitiesWhereParentController
     {
         $this->communityRequest = new CommunityRequests();
     }
-    public function handler(string $communityParentName)
+    public function handler(string $communityParentName, ?int $page)
     {
         $communityParent = (new GetCommunityByNameUseCase($this->communityRequest))->handler($communityParentName);
-        return (new GetCommunitiesWhereParentUseCase($this->communityRequest))->handler($communityParent->uuid());
+        return (new GetCommunitiesWhereParentUseCase($this->communityRequest))->handler($communityParent->uuid(),($page ?? 0));
     }
 }

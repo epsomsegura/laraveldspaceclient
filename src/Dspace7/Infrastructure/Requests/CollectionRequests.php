@@ -36,21 +36,21 @@ final class CollectionRequests implements CollectionContract
         return "success";
     }
 
-    public function findAll(): array
+    public function findAll(int $page): array
     {
-        $collections = $this->requester->setMethod('get')->setEndpoint('core/collections')->request();
+        $collections = $this->requester->setMethod('get')->setEndpoint('core/collections')->setQuery(["page" => $page])->request();
         if (!array_key_exists('_embedded', get_object_vars($collections))) {
             throw CollectionExceptions::notFound();
         }
-        return $this->getCollections($collections->_embedded->collections);
+        return ["elements" => $collections->_embedded->collections, "page" => $collections->page];
     }
-    public function findAllByCommunityUUID(string $communityUUID) : array
+    public function findAllByCommunityUUID(string $communityUUID, int $page): array
     {
-        $collections = $this->requester->setMethod('get')->setEndpoint('core/communities/'.$communityUUID.'/collections')->request();
+        $collections = $this->requester->setMethod('get')->setEndpoint('core/communities/' . $communityUUID . '/collections')->setQuery(["page" => $page])->request();
         if (!array_key_exists('_embedded', get_object_vars($collections))) {
             throw CollectionExceptions::notFound();
         }
-        return $this->getCollections($collections->_embedded->collections);
+        return ["elements" => $collections->_embedded->collections,"page" => $collections->page];
     }
     public function findOneByHandle(string $handle): Collection
     {
@@ -58,7 +58,7 @@ final class CollectionRequests implements CollectionContract
         if (!array_key_exists('_embedded', get_object_vars($collections))) {
             throw CollectionExceptions::notFound();
         }
-        $collections = array_filter($collections->_embedded->collections,function($collection) use ($handle){
+        $collections = array_filter($collections->_embedded->collections, function ($collection) use ($handle) {
             return ($collection->handle === $handle && $collection->type === "collection");
         });
         if (sizeof($collections) <= 0) {
@@ -77,7 +77,7 @@ final class CollectionRequests implements CollectionContract
         if (!array_key_exists('_embedded', get_object_vars($collections))) {
             throw CollectionExceptions::notFound();
         }
-        $collections = array_filter($collections->_embedded->collections,function($collection) use ($name){
+        $collections = array_filter($collections->_embedded->collections, function ($collection) use ($name) {
             return ($collection->name === $name && $collection->type === "collection");
         });
         if (sizeof($collections) <= 0) {
@@ -98,7 +98,7 @@ final class CollectionRequests implements CollectionContract
         );
     }
 
-    private function getCollections(array $collections) : array
+    private function getCollections(array $collections): array
     {
         $uniqueCollections = [];
         foreach ($collections as $collection) {
@@ -107,7 +107,7 @@ final class CollectionRequests implements CollectionContract
                 $collection->uuid,
                 $collection->name,
                 $collection->handle,
-                Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata),TRUE)),
+                Metadata::arrayToMetadataArray(json_decode(json_encode($collection->metadata), TRUE)),
             );
         }
         return $uniqueCollections;

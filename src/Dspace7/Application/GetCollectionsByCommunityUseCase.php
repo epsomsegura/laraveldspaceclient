@@ -15,8 +15,8 @@ final class GetCollectionsByCommunityUseCase
     ) {
         $this->collectionContract = $collectionContract;
     }
-    public function handler(string $communityUUID): array
+    public function handler(string $communityUUID, int $page): array
     {
-        return $this->collectionContract->findAllByCommunityUUID($communityUUID);
+        return $this->collectionContract->findAllByCommunityUUID($communityUUID, $page);
     }
 }

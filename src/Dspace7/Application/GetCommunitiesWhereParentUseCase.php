@@ -14,8 +14,8 @@ final class GetCommunitiesWhereParentUseCase
     ) {
         $this->communityContract = $communityContract;
     }
-    public function handler(string $communityParentUUID): array
+    public function handler(string $communityParentUUID, int $page): array
     {
-        return $this->communityContract->findAllWhereParent($communityParentUUID);
+        return $this->communityContract->findAllWhereParent($communityParentUUID, $page);
     }
 }

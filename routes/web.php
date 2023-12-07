@@ -43,24 +43,12 @@ Route::group(["prefix" => "communities"], function () {
             return response()->json(((new GetCommunityByNameController)->handler($request->name))->toArray(), 200);
         }
         if ($request->has('isParent') && $request->isParent == TRUE) {
-            $communities = (new GetCommunitiesIsParentController)->handler();
-            foreach ($communities as $key => $community) {
-                $communities[$key] = $community->toArray();
-            }
-            return response()->json($communities, 200);
+            return response()->json((new GetCommunitiesIsParentController)->handler($request->page), 200);
         }
         if ($request->has('communityParentName')) {
-            $communities = (new GetCommunitiesWhereParentController)->handler($request->communityParentName);
-            foreach ($communities as $key => $community) {
-                $communities[$key] = $community->toArray();
-            }
-            return response()->json($communities, 200);
+            return response()->json((new GetCommunitiesWhereParentController)->handler($request->communityParentName,$request->page), 200);
         }
-        $communities = (new GetCommunitiesController)->handler();
-        foreach ($communities as $key => $community) {
-            $communities[$key] = $community->toArray();
-        }
-        return response()->json($communities, 200);
+        return response()->json((new GetCommunitiesController)->handler($request->page), 200);
     });
     Route::post("", function (Request $request) {
         if ($request->has('communityParentName')) {
@@ -86,11 +74,7 @@ Route::group(["prefix" => "communities"], function () {
 Route::group(["prefix" => "collections"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('communityName')) {
-            $collections = (new GetCollectionsByCommunityController)->handler($request->communityName);
-            foreach ($collections as $key => $collection) {
-                $collections[$key] = $collection->toArray();
-            }
-            return response()->json($collections, 200);
+            return response()->json((new GetCollectionsByCommunityController)->handler($request->communityName,$request->page), 200);
         }
         if ($request->has('handle')) {
             return response()->json(((new GetCollectionByHandleController)->handler($request->handle))->toArray(), 200);
@@ -98,11 +82,7 @@ Route::group(["prefix" => "collections"], function () {
         if ($request->has('name')) {
             return response()->json(((new GetCollectionByNameController)->handler($request->name))->toArray(), 200);
         }
-        $collections = (new GetCollectionsController)->handler();
-        foreach ($collections as $key => $collection) {
-            $collections[$key] = $collection->toArray();
-        }
-        return response()->json($collections, 200);
+        return response()->json((new GetCollectionsController)->handler($request->page), 200);
     });
     Route::get("{uuid}", function (Request $request, string $uuid) {
         return response()->json(((new GetCollectionByUUIDController)->handler($uuid))->toArray(), 200);
@@ -125,11 +105,7 @@ Route::group(["prefix" => "collections"], function () {
 Route::group(["prefix" => "items"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('collectionName')) {
-            $items = (new GetItemsByCollectionController)->handler($request->collectionName);
-            foreach ($items as $key => $item) {
-                $items[$key] = $item->toArray();
-            }
-            return response()->json($items, 200);
+            return response()->json((new GetItemsByCollectionController)->handler($request->collectionName,$request->page), 200);
         }
         if ($request->has('handle')) {
             return response()->json(((new GetItemByHandleController)->handler($request->handle))->toArray(), 200);
@@ -137,11 +113,7 @@ Route::group(["prefix" => "items"], function () {
         if ($request->has('name')) {
             return response()->json(((new GetItemByNameController)->handler($request->name))->toArray(), 200);
         }
-        $items = (new GetItemsController)->handler();
-        foreach ($items as $key => $item) {
-            $items[$key] = $item->toArray();
-        }
-        return response()->json($items, 200);
+        return response()->json((new GetItemsController)->handler($request->page), 200);
     });
     Route::get("{uuid}", function (string $uuid) {
         return response()->json(((new GetItemByUUIDController)->handler($uuid))->toArray(), 200);
@@ -164,11 +136,7 @@ Route::group(["prefix" => "items"], function () {
 Route::group(["prefix" => "bundles"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('itemHandle')) {
-            $bundles = (new GetBundlesByItemController())->handler($request->itemHandle);
-            foreach ($bundles as $key => $bundle) {
-                $bundles[$key] = $bundle->toArray();
-            }
-            return response()->json($bundles, 200);
+            return response()->json((new GetBundlesByItemController())->handler($request->itemHandle,$request->page), 200);
         }
         return response()->json(["message"=>"Get all bundles is unsupported, add itemHandle param to request."],200);
     });

@@ -18,9 +18,9 @@ final class GetItemsByCollectionController
         $this->itemRequests = new ItemRequests();
         $this->collectionRequests = new CollectionRequests();
     }
-    public function handler(string $collectionName)
+    public function handler(string $collectionName, ?int $page)
     {
         $collection = (new GetCollectionByNameUseCase($this->collectionRequests))->handler($collectionName);
-        return (new GetItemsByCollectionUseCase($this->itemRequests))->handler($collection->uuid());
+        return (new GetItemsByCollectionUseCase($this->itemRequests))->handler($collection->uuid(),($page ?? 0));
     }
 }

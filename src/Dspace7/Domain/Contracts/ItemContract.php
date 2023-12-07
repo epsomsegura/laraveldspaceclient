@@ -9,8 +9,8 @@ interface ItemContract
 {
     public function create($item, string $collectionUUID) : ?Item;
     public function delete(string $uuid) : string;
-    public function findAll() : array;
-    public function findAllByCollectionUUID(string $collectionUUID) : array;
+    public function findAll(int $page) : array;
+    public function findAllByCollectionUUID(string $collectionUUID, int $page) : array;
     public function findOneByHandle(string $handle) : ?Item;
     public function findOneByName(string $name) : ?Item;
     public function findOneByUUID(string $uuid) : ?Item;
