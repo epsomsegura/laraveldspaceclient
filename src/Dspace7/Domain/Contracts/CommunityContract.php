@@ -12,6 +12,7 @@ interface CommunityContract
     public function delete($uuid) : string;
     public function findAll(int $page) : array;
     public function findAllIsParent(int $page) : array;
+    public function findAllWhereName(string $name,int $page) : array;
     public function findAllWhereParent(string $communityParentUUID,int $page) : array;
     public function findOneByUUID(string $uuid) : ?Community;
     public function findOneByHandle(string $handle) : ?Community;

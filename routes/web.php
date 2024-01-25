@@ -32,8 +32,6 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-
 Route::group(["prefix" => "communities"], function () {
     Route::get("", function (Request $request) {
         if ($request->has('handle')) {

@@ -30,9 +30,9 @@ final class CommunityRequests implements CommunityContract
             Metadata::arrayToMetadataArray(json_decode(json_encode($community->metadata), TRUE))
         );
     }
-    public function createWithParent($community,$communityParentUUID): ?Community
+    public function createWithParent($community, $communityParentUUID): ?Community
     {
-        $community = $this->requester->setMethod('post')->setEndpoint('core/communities')->setQuery(["parent"=>$communityParentUUID])->setBody(json_encode($community))->setHeaders(['Content-Type' => 'application/json'])->request();
+        $community = $this->requester->setMethod('post')->setEndpoint('core/communities')->setQuery(["parent" => $communityParentUUID])->setBody(json_encode($community))->setHeaders(['Content-Type' => 'application/json'])->request();
         return new Community(
             $community->id,
             $community->uuid,
@@ -49,11 +49,11 @@ final class CommunityRequests implements CommunityContract
 
     public function findAll(int $page): array
     {
-        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities')->setQuery(["page" => $page])->request();
+        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities')->setQuery(["page" => $page, "size" => 5])->request();
         if (!array_key_exists('_embedded', get_object_vars($communities))) {
             throw CommunityExceptions::notFound();
         }
-        return ["elements" => $communities->_embedded->communities,"page"=>$communities->page];
+        return ["elements" => $communities->_embedded->communities, "page" => $communities->page];
     }
     public function findAllIsParent(int $page): array
     {
@@ -61,15 +61,23 @@ final class CommunityRequests implements CommunityContract
         if (!array_key_exists('_embedded', get_object_vars($communities))) {
             throw CommunityExceptions::notFound();
         }
-        return ["elements" => $communities->_embedded->communities,"page"=>$communities->page];
+        return ["elements" => $communities->_embedded->communities, "page" => $communities->page];
     }
-    public function findAllWhereParent(string $communityParentUUID,int $page): array
+    public function findAllWhereName(string $name, int $page): array
     {
-        $subcommunities = $this->requester->setMethod('get')->setEndpoint('core/communities/'.$communityParentUUID.'/subcommunities')->setQuery(["page" => $page])->request();
+        $communities = $this->requester->setMethod('get')->setEndpoint('core/communities/search/findAdminAuthorized')->setQuery(["query" => $name])->request();
+        if (!array_key_exists('_embedded', get_object_vars($communities))) {
+            return [];
+        }
+        return ["elements" => $communities->_embedded->communities, "page" => $communities->page];
+    }
+    public function findAllWhereParent(string $communityParentUUID, int $page): array
+    {
+        $subcommunities = $this->requester->setMethod('get')->setEndpoint('core/communities/' . $communityParentUUID . '/subcommunities')->setQuery(["page" => $page, "size" => 5])->request();
         if (!array_key_exists('_embedded', get_object_vars($subcommunities))) {
             throw CommunityExceptions::notFound();
         }
-        return ["elements" => $subcommunities->_embedded->subcommunities, "page"=>$subcommunities->page];
+        return ["elements" => $subcommunities->_embedded->subcommunities, "page" => $subcommunities->page];
     }
     public function findOneByUUID(string $uuid): Community
     {

@@ -2,7 +2,9 @@
 
 namespace Epsomsegura\Laraveldspaceclient\Shared\Infrastructure;
 
+use Exception;
 use GuzzleHttp\Cookie\CookieJar;
+use Illuminate\Support\Facades\Log;
 
 class GuzzleRequester
 {
@@ -60,26 +62,32 @@ class GuzzleRequester
     }
     public function request()
     {
-        $response = null;
-        $this->setRequestOptions();
-        switch ($this->method) {
-            case 'get':
-                $response = json_decode($this->client->get($this->endpoint, $this->options)->getBody()->getContents());
-                break;
-            case 'post':
-                $response = json_decode($this->client->post($this->endpoint, $this->options)->getBody()->getContents());
-                break;
-            case 'put':
-                $response = json_decode($this->client->put($this->endpoint, $this->options)->getBody()->getContents());
-                break;
-            case 'patch':
-                $response = json_decode($this->client->patch($this->endpoint, $this->options)->getBody()->getContents());
-                break;
-            case 'delete':
-                $response = json_decode($this->client->delete($this->endpoint, $this->options)->getBody()->getContents());
-                break;
+        try{
+            $response = null;
+            $this->setRequestOptions();
+            switch ($this->method) {
+                case 'get':
+                    $response = json_decode($this->client->get($this->endpoint, $this->options)->getBody()->getContents());
+                    break;
+                case 'post':
+                    $response = json_decode($this->client->post($this->endpoint, $this->options)->getBody()->getContents());
+                    break;
+                case 'put':
+                    $response = json_decode($this->client->put($this->endpoint, $this->options)->getBody()->getContents());
+                    break;
+                case 'patch':
+                    $response = json_decode($this->client->patch($this->endpoint, $this->options)->getBody()->getContents());
+                    break;
+                case 'delete':
+                    $response = json_decode($this->client->delete($this->endpoint, $this->options)->getBody()->getContents());
+                    break;
+            }
+            return $response;
         }
-        return $response;
+        catch(Exception $e){
+            Log::error($e);
+            return "Error";
+        }
     }
     public function setBody($body)
     {
