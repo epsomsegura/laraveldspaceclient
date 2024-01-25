@@ -6,11 +6,6 @@ You can install this plugin using composer
 composer require epsomsegura/laraveldspaceclient
 ~~~
 
-Then, you need to publish the assets
-~~~
-php artisan laraveldspaceclient:publish
-~~~
-
 ## Seting up Laravel environment
 You should add this variables with your DSpace 7 administration information into ***.env*** file
 ~~~
