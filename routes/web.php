@@ -5,6 +5,7 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCollectionContr
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityWithParentController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateItemController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateRelationshipController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteBundleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCommunityController;
@@ -146,5 +147,11 @@ Route::group(["prefix" => "bundles"], function () {
     });
     Route::delete("{uuid}", function (string $uuid) {
         return response()->json(["message" => (new DeleteBundleController)->handler($uuid)], 200);
+    });
+});
+
+Route::group(["prefix" => "relationships"], function () {
+    Route::post("", function (Request $request) {
+        return response()->json(((new CreateRelationshipController)->handler($request->relationshipType,$request->$uuids))->toArray(), 200);
     });
 });
