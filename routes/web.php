@@ -1,6 +1,9 @@
 <?php
 
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBitstreamController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBitstreamByItemUuidController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBundleController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBundleByItemUuidController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityWithParentController;
@@ -11,6 +14,7 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCollectionContr
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\DeleteItemController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetBundlesByItemController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetBundlesByItemUuidController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByHandleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByNameController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionByUUIDController;
@@ -137,12 +141,18 @@ Route::group(["prefix" => "bundles"], function () {
         if ($request->has('itemHandle')) {
             return response()->json((new GetBundlesByItemController())->handler($request->itemHandle,$request->page), 200);
         }
-        return response()->json(["message"=>"Get all bundles is unsupported, add itemHandle param to request."],200);
+        if ($request->has('itemUuid')) {
+            return response()->json((new GetBundlesByItemUuidController())->handler($request->itemUuid,$request->page), 200);
+        }
+        return response()->json(["message"=>"Get all bundles is unsupported, add itemHandle or itemUuid param to request."],200);
     });
     Route::get("{uuid}", function (string $uuid) {
         return response()->json(((new GetItemByUUIDController)->handler($uuid))->toArray(), 200);
     });
     Route::post("", function (Request $request) {
+        if ($request->has('itemUuid')) {
+            return response()->json(((new CreateBundleByItemUuidController)->handler($request->bundle,$request->itemUuid))->toArray(), 200);
+        }
         return response()->json(((new CreateBundleController)->handler($request->bundle,$request->itemHandle))->toArray(), 200);
     });
     Route::delete("{uuid}", function (string $uuid) {
@@ -150,8 +160,25 @@ Route::group(["prefix" => "bundles"], function () {
     });
 });
 
+
+
+
+
 Route::group(["prefix" => "relationships"], function () {
     Route::post("", function (Request $request) {
         return response()->json(((new CreateRelationshipController)->handler($request->relationshipType,$request->$uuids))->toArray(), 200);
     });
+});
+
+
+
+
+
+Route::group(["prefix" => "bitstreams"], function () {
+    Route::post("", function (Request $request) {
+        if ($request->has('itemUuid')) {
+            return response()->json(((new CreateBitstreamByItemUuidController)->handler($request->filebitstream, $request->filename, $request->contentType ,$request->itemUuid, $request->bundleName))->toArray(), 200);
+        }
+        return response()->json(((new CreateBitstreamController)->handler($request->filebitstream, $request->filename, $request->contentType ,$request->bundleUuid))->toArray(), 200);
+    });    
 });

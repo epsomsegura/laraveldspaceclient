@@ -18,6 +18,7 @@ class GuzzleRequester
     private $method;
     private $options;
     private $query;
+    private $multipart;
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client([
@@ -60,6 +61,10 @@ class GuzzleRequester
     {
         return $this->query;
     }
+    public function multipart()
+    {
+        return $this->multipart;
+    }
     public function request()
     {
         try{
@@ -69,7 +74,7 @@ class GuzzleRequester
                 case 'get':
                     $response = json_decode($this->client->get($this->endpoint, $this->options)->getBody()->getContents());
                     break;
-                case 'post':
+                case 'post':                                        
                     $response = json_decode($this->client->post($this->endpoint, $this->options)->getBody()->getContents());
                     break;
                 case 'put':
@@ -84,7 +89,7 @@ class GuzzleRequester
             }
             return $response;
         }
-        catch(Exception $e){
+        catch(Exception $e){            
             Log::error($e);
             return "Error";
         }
@@ -105,11 +110,13 @@ class GuzzleRequester
         return $this;
     }
     public function setHeaders(?array $headers)
-    {
+    {        
         $this->headers = [
             'Accept' => 'application/json',
-            'Content-Type' => 'application/x-www-form-urlencoded'
         ];
+        if (!$this->multipart) {
+            $this->headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }        
         if ($this->dspaceToken) {
             $this->headers['X-XSRF-TOKEN'] = $this->dspaceToken;
         }
@@ -129,6 +136,11 @@ class GuzzleRequester
     public function setQuery(?array $query)
     {
         $this->query = $query;
+        return $this;
+    }
+    public function setMultipart($multipart)
+    {
+        $this->multipart = $multipart;
         return $this;
     }
     protected function getBearerToken()
@@ -167,6 +179,9 @@ class GuzzleRequester
         }
         if ($this->body) {
             $this->options['body'] = $this->body;
+        }
+        if ($this->multipart) {
+            $this->options['multipart'] = $this->multipart;
         }
     }
 }
