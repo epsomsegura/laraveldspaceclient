@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Epsomsegura\Laraveldspaceclient\Dspace7\Application;
 
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\BundleContract;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Item;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Bundle;
 
 final class CreateBundleUseCase
 {
@@ -15,7 +15,7 @@ final class CreateBundleUseCase
     ) {
         $this->bundleContract = $bundleContract;
     }
-    public function handler($bundle, string $itemUUID): ?Item
+    public function handler($bundle, string $itemUUID): ?Bundle
     {
         return $this->bundleContract->create($bundle, $itemUUID);
     }

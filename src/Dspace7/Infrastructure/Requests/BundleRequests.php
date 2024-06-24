@@ -21,10 +21,9 @@ final class BundleRequests implements BundleContract
 
     public function create($bundle, string $itemUUID): ?Bundle
     {
-        $bundle = $this->requester->setMethod('post')->setEndpoint('core/items/'.$itemUUID.'/bundles')->setBody(json_encode($bundle))->setHeaders(['Content-Type' => 'application/json'])->request();
-        dd($bundle);
-        return new Bundle(
-            $bundle->id,
+        $bundle = $this->requester->setMethod('post')->setEndpoint('core/items/'.$itemUUID.'/bundles')->setBody(json_encode($bundle))->setHeaders(['Content-Type' => 'application/json'])->request();                
+        return new Bundle(            
+            null,
             $bundle->uuid,
             $bundle->name,
             $bundle->handle,
@@ -39,14 +38,14 @@ final class BundleRequests implements BundleContract
     }
     public function findAllByItemUUID(string $itemUUID, int $page) : array
     {
-        $bundles = $this->requester->setMethod('get')->setEndpoint('core/items/'.$itemUUID.'/bundles')->setQuery(["page" => $page])->request();
-        if (!array_key_exists('_embedded', get_object_vars($bundles))) {
+        $response = $this->requester->setMethod('get')->setEndpoint('core/items/'.$itemUUID.'/bundles')->setQuery(["page" => $page])->request();
+        if (!array_key_exists('_embedded', get_object_vars($response))) {
             throw BundleExceptions::notFound();
         }
-        $bundles = array_filter($bundles->_embedded->bundles, function($bundle){
+        $bundles = array_filter($response->_embedded->bundles, function($bundle){
             return ($bundle->type === "bundle");
-        });
-        return ["elements" => $bundles->_embedded->bundles, "page" => $bundles->page];
+        });                
+        return ["elements" => $bundles, "page" => $response->page];
     }
     public function findOneByUUID(string $uuid): ?Bundle
     {
