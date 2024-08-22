@@ -8,4 +8,5 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Bitstream;
 interface BitstreamContract
 {
     public function create($filestream, $filename, $contentType, $bundleUUID) : ?Bitstream;
+    public function findAllByBundleUUID(string $bundleUUID, int $page) : array;
 }
