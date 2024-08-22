@@ -56,11 +56,12 @@ final class ItemRequests implements ItemContract
         if ($items->_embedded->searchResult && !array_key_exists('_embedded', get_object_vars($items->_embedded->searchResult))) {
             throw ItemExceptions::notFound();
         }
+        $page = $items->_embedded->searchResult->page;
         $items = array_filter($items->_embedded->searchResult->_embedded->objects, function($item){
             $item = $item->_embedded->indexableObject;
             return ($item->type === "item");
         });
-        return $this->getItems($items);
+        return ['items' => $this->getItems($items), 'page' => $page ];
     }
     public function findOneByHandle(string $handle): ?Item
     {
