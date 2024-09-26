@@ -1,9 +1,9 @@
 <?php
 
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBitstreamController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBitstreamByItemUuidController;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBundleController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBitstreamController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBundleByItemUuidController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateBundleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\CreateCommunityWithParentController;
@@ -24,8 +24,8 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionsByCommu
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCollectionsController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunitiesController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunitiesIsParentController;
-use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunitiesWhereParentController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunitiesWhereParentByUuidController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunitiesWhereParentController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunityByHandleController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunityByNameController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetCommunityByUUIDController;
@@ -35,6 +35,9 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemByUUIDControll
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemsByCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemsByCollectionUuidController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetItemsController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetResourcePoliciesByBitstreamUuidController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetWorkflowitemsByCollectionUuidController;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\GetWorkflowitemByIdController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateCollectionController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateCommunityController;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Infrastructure\UpdateItemController;
@@ -199,5 +202,34 @@ Route::group(["prefix" => "bitstreams"], function () {
             return response()->json(((new CreateBitstreamByItemUuidController)->handler($request->filebitstream, $request->filename, $request->contentType ,$request->itemUuid, $request->bundleName))->toArray(), 200);
         }
         return response()->json(((new CreateBitstreamController)->handler($request->filebitstream, $request->filename, $request->contentType ,$request->bundleUuid))->toArray(), 200);
+    });
+});
+
+
+
+
+
+Route::group(["prefix" => "resourcepolicies"], function () {
+    Route::get("", function (Request $request) {
+        if ($request->has('bitstreamUUID')) {
+            return response()->json((new GetResourcePoliciesByBitstreamUuidController())->handler($request->bitstreamUUID,$request->page), 200);
+        }
+        return response()->json(["message"=>"Get all resourcepolicies is unsupported, add bitstreamUUID param to request."], 200);
+    });
+});
+
+
+
+
+
+Route::group(["prefix" => "workflowitems"], function () {
+    Route::get("", function (Request $request) {
+        if ($request->has('collectionUuid')) {
+            return response()->json((new GetWorkflowitemsByCollectionUuidController)->handler($request->collectionUuid,$request->page), 200);
+        }
+        return response()->json(["message"=>"Get all workflowitems is unsupported, add collectionUuid param to request."], 200);
+    });
+    Route::get("{id}", function (string $id) {
+        return response()->json(((new GetWorkflowitemByIdController)->handler($id)), 200);
     });
 });
