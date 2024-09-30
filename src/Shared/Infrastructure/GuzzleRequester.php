@@ -74,7 +74,7 @@ class GuzzleRequester
                 case 'get':
                     $response = json_decode($this->client->get($this->endpoint, $this->options)->getBody()->getContents());
                     break;
-                case 'post':                                        
+                case 'post':
                     $response = json_decode($this->client->post($this->endpoint, $this->options)->getBody()->getContents());
                     break;
                 case 'put':
@@ -89,7 +89,7 @@ class GuzzleRequester
             }
             return $response;
         }
-        catch(Exception $e){            
+        catch(Exception $e){
             Log::error($e);
             return "Error";
         }
@@ -110,13 +110,13 @@ class GuzzleRequester
         return $this;
     }
     public function setHeaders(?array $headers)
-    {        
+    {
         $this->headers = [
             'Accept' => 'application/json',
         ];
         if (!$this->multipart) {
             $this->headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        }        
+        }
         if ($this->dspaceToken) {
             $this->headers['X-XSRF-TOKEN'] = $this->dspaceToken;
         }
@@ -164,7 +164,37 @@ class GuzzleRequester
     }
     protected function setDspaceToken()
     {
-        $this->dspaceToken = $this->client->get("")->getHeaders()['DSPACE-XSRF-TOKEN'][0];
+        try {
+            $response = $this->client->get("/");
+            $headers = $response->getHeaders();
+            if (array_key_exists('DSPACE-XSRF-TOKEN', $headers)) {
+                $this->dspaceToken = $headers['DSPACE-XSRF-TOKEN'][0];
+            } else {
+                throw new Exception("DSPACE-XSRF-TOKEN not found at '/'");
+            }
+        } catch (Exception $e) {
+            try {
+                $response = $this->client->get("");
+                $headers = $response->getHeaders();
+                if (array_key_exists('DSPACE-XSRF-TOKEN', $headers)) {
+                    $this->dspaceToken = $headers['DSPACE-XSRF-TOKEN'][0];
+                } else {
+                    throw new Exception("DSPACE-XSRF-TOKEN not found at route empty");
+                }
+            } catch (Exception $e) {
+                try {
+                    $response = $this->client->get("security/csrf");
+                    $headers = $response->getHeaders();
+                    if (array_key_exists('DSPACE-XSRF-TOKEN', $headers)) {
+                        $this->dspaceToken = $headers['DSPACE-XSRF-TOKEN'][0];
+                    } else {
+                        throw new Exception("DSPACE-XSRF-TOKEN not found at security/csrf");
+                    }
+                } catch (Exception $e) {
+                    throw new Exception("DSPACE-XSRF-TOKEN not found");
+                }
+            }
+        }
     }
     protected function setRequestOptions()
     {
