@@ -8,6 +8,7 @@ use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Contracts\BitstreamContract;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Exceptions\BitstreamExceptions;
 use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Bitstream;
 use Epsomsegura\Laraveldspaceclient\Shared\Infrastructure\GuzzleRequester;
+use Epsomsegura\Laraveldspaceclient\Dspace7\Domain\Metadata;
 
 final class BitstreamRequests implements BitstreamContract
 {
@@ -50,5 +51,20 @@ final class BitstreamRequests implements BitstreamContract
             return ($bitstream->type === "bitstream");
         });
         return ["elements" => $bitstreams, "page" => $response->page];
+    }
+
+    public function findOneByUUID(string $uuid): Bitstream
+    {
+        $bitstream = $this->requester->setMethod('get')->setEndpoint('core/bitstreams/' . $uuid)->request();
+        return new Bitstream(
+            $bitstream->uuid,
+            $bitstream->name,
+            $bitstream->handle,
+            Metadata::arrayToMetadataArray(json_decode(json_encode($bitstream->metadata), TRUE)),
+            $bitstream->sizeBytes,
+            $bitstream->checkSum,
+            $bitstream->sequenceId,
+            $bitstream->type,
+        );
     }
 }
