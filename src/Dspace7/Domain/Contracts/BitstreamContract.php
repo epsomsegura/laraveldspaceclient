@@ -9,4 +9,6 @@ interface BitstreamContract
 {
     public function create($filestream, $filename, $contentType, $bundleUUID) : ?Bitstream;
     public function findAllByBundleUUID(string $bundleUUID, int $page) : array;
+    public function findOneByUUID(string $uuid) : ?Bitstream;
+
 }
