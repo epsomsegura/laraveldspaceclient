@@ -6,23 +6,25 @@ class Item
 {
     private ?string $_id;
     private ?string $_uuid;
-    private string $_name;
+    private ?string $_name;
     private ?string $_handle;
     private array $_metadata;
     private ?bool $_inArchive;
     private ?bool $_discoverable;
     private ?bool $_withdrawn;
     private string $_type;
+    private mixed $_links;
     public function __construct(
         ?string $id,
         ?string $uuid,
-        string $name,
+        ?string $name,
         ?string $handle,
         array $metadata,
         ?bool $inArchive,
         ?bool $discoverable,
         ?bool $withdrawn,
-        string $type
+        string $type,
+        mixed $links,
     ) {
         $this->_id = $id;
         $this->_uuid = $uuid;
@@ -33,6 +35,7 @@ class Item
         $this->_discoverable = $discoverable;
         $this->_withdrawn = $withdrawn;
         $this->_type = $type;
+        $this->_links = $links;
     }
     public function id(): ?string
     {
@@ -70,6 +73,10 @@ class Item
     {
         return $this->_type;
     }
+    public function links(): mixed
+    {
+        return $this->_links;
+    }
     public function toCollection()
     {
         return collect($this);
@@ -86,6 +93,7 @@ class Item
             "discoverable" => $this->_discoverable,
             "withdrawn" => $this->_withdrawn,
             "type" => $this->_type,
+            "_links" => $this->_links,
         ];
     }
 }

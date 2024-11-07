@@ -45,7 +45,7 @@ final class ItemRequests implements ItemContract
         if (!array_key_exists('_embedded', get_object_vars($items))) {
             throw ItemExceptions::notFound();
         }
-        return ["result" => $items->_embedded->items,"page" => $items->page];
+        return ["items" => $items->_embedded->items,"page" => $items->page];
     }
     public function findAllByCollectionUUID(string $collectionUUID, int $page) : array
     {
@@ -134,7 +134,8 @@ final class ItemRequests implements ItemContract
                 $item->inArchive,
                 $item->discoverable,
                 $item->withdrawn,
-                $item->type
+                $item->type,
+                $item->_links
             );
         }
         return $uniqueItems;
