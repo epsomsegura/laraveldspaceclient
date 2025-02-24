@@ -6,13 +6,13 @@ use Maatwebsite\Excel\Concerns\ToArray;
 
 class Metadata
 {
-    private string $_value;
+    private ?string $_value;
     private ?string $_language;
     private ?string $_authority;
     private ?int $_confidence;
     private ?int $_place;
     public function __construct(
-        string $value,
+        ?string $value,
         ?string $language,
         ?string $authority,
         ?int $confidence,
@@ -24,7 +24,7 @@ class Metadata
         $this->_confidence = $confidence;
         $this->_place = $place;
     }
-    public function value(): string
+    public function value(): ?string
     {
         return $this->_value;
     }
@@ -51,7 +51,7 @@ class Metadata
             foreach ($metadataElements as $metadataElement) {
                 $metadataElement = is_object($metadataElement) ? $metadataElement->toArray() : $metadataElement;
                 $metadataArray[$key][] = [
-                    "value" => $metadataElement["value"],
+                    "value" => $metadataElement["value"] ?? null,
                     "language" => $metadataElement["language"] ?? null,
                     "authority" => $metadataElement["authority"] ?? null,
                     "confidence" => $metadataElement["confidence"] ?? null,
@@ -68,7 +68,7 @@ class Metadata
             foreach ($metadataElements as $metadataElement) {
                 $metadataElement = is_object($metadataElement) ? $metadataElement->toArray() : $metadataElement;
                 $metadataArray[$key][] = new Metadata(
-                    $metadataElement["value"],
+                    $metadataElement["value"] ?? null,
                     $metadataElement["language"] ?? null,
                     $metadataElement["authority"] ?? null,
                     $metadataElement["confidence"] ?? null,
