@@ -14,11 +14,12 @@ class GuzzleRequester
     private $dspaceCookie;
     private $dspaceToken;
     private $endpoint;
+    private $formParams;
     private $headers;
     private $method;
+    private $multipart;
     private $options;
     private $query;
-    private $multipart;
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client([
@@ -44,6 +45,10 @@ class GuzzleRequester
     public function dspaceToken()
     {
         return $this->dspaceToken;
+    }
+    public function formParams()
+    {
+        return $this->formParams;
     }
     public function headers()
     {
@@ -109,6 +114,11 @@ class GuzzleRequester
         $this->endpoint = $endpoint;
         return $this;
     }
+    public function setFormParams(?array $formParams)
+    {
+        $this->formParams = $formParams;
+        return $this;
+    }
     public function setHeaders(?array $headers)
     {
         $this->headers = [
@@ -147,15 +157,15 @@ class GuzzleRequester
     {
         $this->setDspaceToken();
         $this->setDspaceCookie();
-        $this->setQuery(['user' => getenv('DSPACE_API_EMAIL'), 'password' => getenv('DSPACE_API_PASS')]);
+        $this->setFormParams(['user' => getenv('DSPACE_API_EMAIL'), 'password' => getenv('DSPACE_API_PASS')]);
         $this->setHeaders(null);
         $options = [
             'headers' => $this->headers,
             'cookies' => $this->dspaceCookie,
-            'query' => $this->query
+            'form_params' => $this->formParams
         ];
         $this->bearerToken = $this->client->post("authn/login", $options)->getHeaders()['Authorization'][0];
-        $this->setQuery(null);
+        $this->setFormParams(null);
         $this->setHeaders(null);
     }
     protected function setDspaceCookie()
@@ -212,6 +222,9 @@ class GuzzleRequester
         }
         if ($this->multipart) {
             $this->options['multipart'] = $this->multipart;
+        }
+        if ($this->formParams) {
+            $this->options['form_params'] = $this->formParams;
         }
     }
 }
